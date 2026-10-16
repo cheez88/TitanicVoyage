@@ -191,7 +191,7 @@ import * as THREE from 'three';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { Water } from 'three/addons/objects/Water.js';
 import { Reflector } from 'three/addons/objects/Reflector.js';
-import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
+import { mergeVertices, mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
@@ -1053,13 +1053,105 @@ function buildStairs(ch){
     mir.material.fragmentShader = mir.material.fragmentShader.replace('gl_FragColor = vec4( blendOverlay( base.rgb, color ), 1.0 );', 'gl_FragColor = vec4( base.rgb * 0.22, 1.0 );');
     mir.rotation.x = -Math.PI / 2; mir.position.set(0, 0.004, 3.5); mir.userData.noAO = true; S.add(mir);
   }
-  plane(16, 9, oak(16, 9), 0, 4.5, 8, Math.PI, 0, S);
-  plane(9, 9, oak(9, 9), -8, 4.5, 3.5, Math.PI / 2, 0, S);
-  plane(9, 9, oak(9, 9), 8, 4.5, 3.5, -Math.PI / 2, 0, S);
+  // back wall with an opening for the double doors to the reception room
+  plane(6.7, 9, oak(6.7, 9), -4.65, 4.5, 8, Math.PI, 0, S); plane(6.7, 9, oak(6.7, 9), 4.65, 4.5, 8, Math.PI, 0, S);
+  plane(2.6, 5.7, oak(2.6, 5.7), 0, 6.15, 8, Math.PI, 0, S);
+  // side walls with openings into the first-class cabin corridors
+  for (const sd of [-1, 1]){
+    const ry = -sd * Math.PI / 2;
+    plane(3.3, 9, oak(3.3, 9), sd * 8, 4.5, 0.65, ry, 0, S); plane(3.3, 9, oak(3.3, 9), sd * 8, 4.5, 6.35, ry, 0, S);
+    plane(2.4, 6.3, oak(2.4, 6.3), sd * 8, 5.85, 3.5, ry, 0, S);
+  }
+  { // decorative details
+    const oakD = oak(.6, 2.4), white = std({ color: 0xb8ae98, roughness: .8 }), carpet = std({ color: 0x6a1c1a, roughness: .95 }), glassLit = std({ color: 0x1a120a, emissive: 0xffc27a, emissiveIntensity: 1.6, roughness: .2 });
+    // carved pilasters with capitals between the wall panels
+    const pil = (x, z, ry, y0, h) => { const g = new THREE.Group(); g.position.set(x, y0, z); g.rotation.y = ry; box(.36, h, .1, oakD, 0, h / 2, 0, g); box(.5, .2, .16, oakD, 0, h - .1, 0, g); box(.5, .18, .16, oakD, 0, .09, 0, g); for (let k = 0; k < 4; k++) box(.05, h - .6, .03, oakD, -.12 + k * .08, h / 2, .06, g); S.add(g); };
+    for (const z of [-0.6, 1.95, 5.05, 7.6]) for (const sd of [-1, 1]){ pil(sd * 7.94, z, sd * -Math.PI / 2, 0, 4.3); pil(sd * 7.94, z, sd * -Math.PI / 2, 4.65, 4.1); }
+    for (const x of [-6.5, -1.6, 1.6, 6.5]){ pil(x, 7.94, Math.PI, 0, 4.3); pil(x, 7.94, Math.PI, 4.65, 4.1); }
+    // corridor archways lead off to cabins, each with its own receding lights and cabin doors
+    for (const sd of [-1, 1]){
+      const cx = sd * 12, G = new THREE.Group(); S.add(G);
+      plane(8, 2.4, carpet, cx, 0.005, 3.5, 0, -Math.PI / 2, G);
+      plane(8, 2.4, white, cx, 2.7, 3.5, 0, Math.PI / 2, G);
+      for (const zz of [2.3, 4.7]) plane(8, 2.7, white, cx, 1.35, zz, zz < 3.5 ? 0 : Math.PI, 0, G);
+      plane(2.4, 2.7, white, sd * 16, 1.35, 3.5, -sd * Math.PI / 2, 0, G);
+      for (const k of [0, 1, 2]){ const dx = sd * (9.4 + k * 2.4); for (const zz of [2.32, 4.68]){ const d = box(.9, 2.05, .05, oak(.4, .9), dx, 1.03, zz, G); const kn = sph(.035, brass, dx + .32, 1.0, zz + (zz < 3.5 ? .05 : -.05), G); } }
+      box(.9, 2.05, .05, oak(.4, .9), sd * 15.97, 1.03, 3.5, G).rotation.y = Math.PI / 2;
+      for (const k of [0, 1, 2]) sph(.12, std({ color: 0xfff2d8, emissive: 0xffd9a0, emissiveIntensity: 2 }), sd * (9.2 + k * 2.6), 2.6, 3.5, G);
+      const cl2 = new THREE.PointLight(0xffd9a0, 2.2, 11, 2); cl2.position.set(sd * 12, 2.4, 3.5); G.add(cl2);
+      // carved arch frame
+      box(.12, 2.85, .3, oakD, sd * 7.96, 1.42, 2.22, S).rotation.y = Math.PI / 2; box(.12, 2.85, .3, oakD, sd * 7.96, 1.42, 4.78, S).rotation.y = Math.PI / 2;
+      box(.16, .3, 2.9, oakD, sd * 7.96, 2.85, 3.5, S);
+    }
+    // double doors to the reception room: one leaf open onto a warmly lit room beyond
+    box(.24, 3.3, .2, oakD, -1.42, 1.65, 7.95, S); box(.24, 3.3, .2, oakD, 1.42, 1.65, 7.95, S); box(3.3, .3, .24, oakD, 0, 3.4, 7.95, S);
+    const ped = new THREE.Shape(); ped.moveTo(-1.8, 0); ped.lineTo(1.8, 0); ped.quadraticCurveTo(0, .9, -1.8, 0);
+    mesh(new THREE.ExtrudeGeometry(ped, { depth: .14, bevelEnabled: false }), oakD, 0, 3.55, 7.82, S);
+    const leaf = (open) => { const g = new THREE.Group(); box(1.3, 3.1, .07, oak(.6, 1.4), .65, 1.55, 0, g); for (const y of [1.0, 2.1]) box(.85, .8, .08, glassLit, .65, y + .3, 0, g); sph(.04, brass, 1.15, 1.2, -.06, g); return g; };
+    const L1 = leaf(); L1.position.set(-1.3, 0, 7.98); S.add(L1);
+    const L2 = leaf(); L2.position.set(1.3, 0, 7.98); L2.rotation.y = Math.PI - 1.15; S.add(L2);
+    plane(2.6, 3.2, std({ color: 0x000000, emissive: 0xffb870, emissiveIntensity: .9 }), 0, 1.6, 10.5, Math.PI, 0, S);
+    plane(2.6, 2.5, std({ color: 0x5a1a16, roughness: .95 }), 0, 0.003, 9.25, 0, -Math.PI / 2, S);
+    for (const sd of [-1, 1]) plane(2.5, 3.3, oak(1, 1.4), sd * 1.3, 1.65, 9.25, -sd * Math.PI / 2, 0, S);
+    const rl = new THREE.PointLight(0xffc27a, 6, 9, 2); rl.position.set(0, 2.2, 9.6); S.add(rl);
+    // wall clock above the doors
+    const clk = canvas(256, 256), cg = clk.getContext('2d');
+    cg.fillStyle = '#f2ead6'; cg.beginPath(); cg.arc(128, 128, 120, 0, 7); cg.fill(); cg.fillStyle = '#1b1b1b'; cg.font = '600 26px Georgia, serif'; cg.textAlign = 'center'; cg.textBaseline = 'middle';
+    ['XII', 'I', 'II', 'III', 'IIII', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'].forEach((t, i) => { const a = i / 12 * Math.PI * 2; cg.fillText(t, 128 + Math.sin(a) * 92, 128 - Math.cos(a) * 92); });
+    const hand = (a, len, w) => { cg.save(); cg.translate(128, 128); cg.rotate(a); cg.fillRect(-w / 2, -len, w, len + 12); cg.restore(); };
+    hand((7 + 15 / 60) / 12 * Math.PI * 2, 52, 6); hand(15 / 60 * Math.PI * 2, 78, 4);
+    const face = new THREE.Mesh(new THREE.CircleGeometry(.42, 40), std({ map: ctex(clk, true), roughness: .4 })); face.position.set(0, 4.15, 7.86); face.rotation.y = Math.PI; S.add(face);
+    const bez = mesh(new THREE.TorusGeometry(.44, .045, 10, 40), brass, 0, 4.15, 7.86, S); bez.rotation.y = Math.PI;
+    // potted palms in brass planters
+    const frondC = canvas(128, 512), fg = frondC.getContext('2d'); fg.strokeStyle = '#fff'; fg.lineCap = 'round';
+    fg.lineWidth = 6; fg.beginPath(); fg.moveTo(64, 512); fg.lineTo(64, 10); fg.stroke(); fg.lineWidth = 7;
+    for (let y = 40; y < 500; y += 18){ const l = 56 * Math.sin(y / 512 * Math.PI) + 6; fg.beginPath(); fg.moveTo(64, y); fg.lineTo(64 - l, y - 26); fg.moveTo(64, y); fg.lineTo(64 + l, y - 26); fg.stroke(); }
+    const frondM = std({ color: 0x2f5a2a, alphaMap: ctex(frondC, false), alphaTest: .5, side: THREE.DoubleSide, roughness: .8 });
+    const frondG = new THREE.PlaneGeometry(.6, 1.6, 1, 8); { const fp = frondG.attributes.position; for (let i = 0; i < fp.count; i++){ const y = fp.getY(i) + .8; fp.setZ(i, .55 * y * y); fp.setY(i, y); } frondG.computeVertexNormals(); }
+    const palm = (x, z) => { const g = new THREE.Group(); g.position.set(x, 0, z); g.add(lathe([[0, 0], [.26, 0], [.32, .18], [.3, .6], [.36, .66], [0, .66]], brass));
+      for (let i = 0; i < 11; i++){ const f = new THREE.Mesh(frondG, frondM); f.position.y = .62 + rnd(0, .25); f.rotation.set(-rnd(.5, 1.0), i / 11 * Math.PI * 2 + rnd(-.2, .2), 0, 'YXZ'); f.scale.setScalar(rnd(.8, 1.15)); g.add(f); }
+      S.add(g); };
+    palm(-2.3, 7.4); palm(2.3, 7.4); palm(-7.3, 1.6); palm(7.3, 5.4);
+    // a settee and two armchairs in green velvet
+    const velvet = phys({ color: 0x2c4a32, roughness: .9, sheen: 1, sheenColor: 0x6a9a70, sheenRoughness: .5 });
+    const settee = (x, z, ry, w) => { const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; box(w, .42, .8, oakD, 0, .21, 0, g); box(w - .1, .14, .7, velvet, 0, .47, .02, g); box(w, .7, .14, velvet, 0, .85, -.35, g); for (const sx of [-1, 1]) box(.12, .4, .8, oakD, sx * (w / 2 - .06), .62, 0, g); S.add(g); };
+    settee(-7.4, 5.6, Math.PI / 2, 1.9); settee(6.9, 6.9, -Math.PI / 2 - .5, .85); settee(7.3, 0.9, -Math.PI / 2, .85);
+    // doors on the gallery level, behind the balustrades
+    for (const sd of [-1, 1]){ const d = box(1.1, 2.3, .06, oak(.5, 1.1), sd * 7.95, 5.8, 3.5, S); d.rotation.y = Math.PI / 2; box(.2, 2.5, .16, oakD, sd * 7.95, 5.85, 2.9, S).rotation.y = Math.PI / 2; box(.2, 2.5, .16, oakD, sd * 7.95, 5.85, 4.1, S).rotation.y = Math.PI / 2; }
+    for (const x of [-4.5, 4.5]){ box(1.1, 2.3, .06, oak(.5, 1.1), x, 5.8, 7.95, S); }
+  }
   plane(5, 9, oak(5, 9), -5.5, 4.5, -1, 0, 0, S);
   plane(5, 9, oak(5, 9), 5.5, 4.5, -1, 0, 0, S);
-  plane(8, 9, oak(8, 9), -3, 4.5, -5, Math.PI / 2, 0, S);
-  plane(8, 9, oak(8, 9), 3, 4.5, -5, -Math.PI / 2, 0, S);
+  // stair alcove walls, each with an archway off the landing into a corridor
+  for (const sd of [-1, 1]){
+    const ry = -sd * Math.PI / 2;
+    plane(5.6, 9, oak(5.6, 9), sd * 3, 4.5, -3.8, ry, 0, S);
+    plane(0.2, 9, oak(.2, 9), sd * 3, 4.5, -8.9, ry, 0, S);
+    plane(2.2, 3.3, oak(2.2, 3.3), sd * 3, 7.35, -7.7, ry, 0, S);
+    plane(2.2, 3, oak(2.2, 3), sd * 3, 1.5, -7.7, ry, 0, S);
+  }
+  { const oakA = oak(.6, 2.4), wallC = std({ color: 0xb8ae98, roughness: .8 }), carpetC = std({ color: 0x6a1c1a, roughness: .95 }), ceilC = std({ color: 0xd8d0bc, roughness: .9 });
+    for (const sd of [-1, 1]){
+      const G = new THREE.Group(); S.add(G);
+      const x0 = sd * 3, x1 = sd * 13, xc = sd * 8;
+      plane(10, 2.2, carpetC, xc, 3.005, -7.7, 0, -Math.PI / 2, G);
+      plane(10, 2.2, ceilC, xc, 5.7, -7.7, 0, Math.PI / 2, G);
+      plane(10, 2.7, wallC, xc, 4.35, -8.8, 0, 0, G); plane(10, 2.7, wallC, xc, 4.35, -6.6, Math.PI, 0, G);
+      for (const k of [0, 1, 2]){ const dx = sd * (4.8 + k * 2.6); for (const zz of [-8.78, -6.62]){ box(.9, 2.05, .05, oak(.4, .9), dx, 4.03, zz, G); sph(.035, brass, dx + .32, 4.0, zz + (zz < -7.7 ? .05 : -.05), G); } }
+      // end of the corridor: a door out to the promenade, with a glazed light beyond
+      plane(2.2, 2.7, wallC, x1, 4.35, -7.7, -sd * Math.PI / 2, 0, G);
+      const dr = box(1.1, 2.2, .06, oak(.5, 1.1), x1 - sd * .03, 4.1, -7.7, G); dr.rotation.y = Math.PI / 2;
+      const gl2 = box(.7, .9, .07, std({ color: 0x0a0e14, emissive: 0x9ab4d0, emissiveIntensity: .5, roughness: .2 }), x1 - sd * .04, 4.6, -7.7, G); gl2.rotation.y = Math.PI / 2;
+      for (const k of [0, 1, 2]) sph(.12, std({ color: 0xfff2d8, emissive: 0xffd9a0, emissiveIntensity: 2 }), sd * (4.6 + k * 3.2), 5.6, -7.7, G);
+      const cl3 = new THREE.PointLight(0xffd9a0, 2.2, 11, 2); cl3.position.set(xc, 5.4, -7.7); G.add(cl3);
+      // carved archway frame on the landing side
+      for (const zz of [-8.82, -6.58]) box(.3, 2.9, .14, oakA, x0 + sd * .04, 4.45, zz, S).rotation.y = Math.PI / 2;
+      box(.16, .3, 2.6, oakA, x0 - sd * .02, 5.85, -7.7, S);
+    }
+    // a small brass plaque pointing the way
+    const pc = canvas(512, 96), pg = pc.getContext('2d'); pg.fillStyle = '#b08a40'; pg.fillRect(0, 0, 512, 96); pg.fillStyle = '#2a1e10'; pg.font = 'bold 40px Georgia, serif'; pg.textAlign = 'center'; pg.textBaseline = 'middle'; pg.fillText('←  STATEROOMS  →', 256, 50);
+    plane(1.4, .26, std({ map: ctex(pc, true), color: 0x8a7a60, metalness: .3, roughness: .5 }), 0, 6.95, -8.95, 0, 0, S);
+  }
   plane(6, 9, oak(6, 9), 0, 4.5, -9, 0, 0, S);
   // skirting and cornice
   const trim = oak(1, 1);
@@ -1489,40 +1581,149 @@ function buildDock(ch){
 
 
   /* --- Southampton extras: boat train, tugs, the liner New York, and a bigger crowd --- */
-  const carriageSide = (() => { const C = canvas(1024, 192), g = C.getContext('2d');
-    g.fillStyle = '#4a2418'; g.fillRect(0, 0, 1024, 192); g.fillStyle = '#c98f70'; g.fillRect(0, 0, 1024, 84); g.fillStyle = '#2a140c'; g.fillRect(0, 84, 1024, 4);
-    for (let i = 0; i < 8; i++){ const x = 14 + i * 126;
-      g.fillStyle = '#161a1e'; g.fillRect(x + 30, 14, 64, 56); g.strokeStyle = '#e8c9a0'; g.lineWidth = 3; g.strokeRect(x + 30, 14, 64, 56);
-      g.strokeStyle = 'rgba(20,10,5,.7)'; g.lineWidth = 2; g.strokeRect(x + 22, 96, 80, 84); g.strokeRect(x + 6, 8, 112, 172);
-      g.fillStyle = '#c9a04a'; g.fillRect(x + 94, 132, 6, 6); }
-    return ctex(C, true); })();
-  const carSideM = std({ map: carriageSide, roughness: .45, metalness: .1 }), carEndM = std({ color: 0x4a2418, roughness: .5 }), roofM = std({ color: 0x5a5a58, roughness: .8 });
-  const locoGreen = std({ color: 0x2c4a30, roughness: .32, metalness: .3 }), locoBlack = std({ color: 0x121212, roughness: .5, metalness: .4 }), bufferRed = std({ color: 0x8a1a14, roughness: .5 }), brassM = std({ color: 0xc9a050, metalness: 1, roughness: .3 });
-  function wheel(par, x, y, z, r, m){ const w = cyl(r, r, .14, m, x, y, z, par, 24); w.rotation.z = Math.PI / 2; return w; }
-  const TX = -12;
-  { // locomotive and tender, facing along the quay
-    const L = new THREE.Group(); L.position.set(TX, 0, 6); S.add(L);
-    box(2.6, .3, 10.5, locoBlack, 0, 1.15, 5.4, L); box(2.8, .7, .25, bufferRed, 0, 1.0, .2, L);
-    for (const sx of [-1, 1]){ const b = cyl(.13, .13, .5, locoBlack, sx * .8, 1.0, -.1, L, 10); b.rotation.x = Math.PI / 2; }
-    cyl(.78, .78, 6.2, locoGreen, 0, 2.15, 4.4, L, 28).rotation.x = Math.PI / 2;
-    cyl(.82, .82, 1.2, locoBlack, 0, 2.15, 1.0, L, 28).rotation.x = Math.PI / 2;
-    cyl(.28, .33, 1.0, locoBlack, 0, 3.3, 1.0, L, 16); cyl(.38, .42, .55, brassM, 0, 3.0, 4.2, L, 16); cyl(.28, .3, .5, locoGreen, 0, 2.95, 6.4, L, 16);
-    box(2.7, 2.2, 2.4, locoGreen, 0, 2.5, 8.6, L); box(2.9, .15, 2.8, locoBlack, 0, 3.65, 8.5, L);
-    for (const sx of [-1, 1]){
-      for (const z of [6.0, 7.9]) wheel(L, sx * .78, .95, z, .95, locoGreen);
-      for (const z of [1.6, 2.8]) wheel(L, sx * .78, .5, z, .5, locoBlack);
-      for (const z of [10.8, 12.6, 14.4]) wheel(L, sx * .78, .55, z, .55, locoBlack);
-      box(.06, .12, 1.9, steel, sx * .88, .95, 6.95, L);
+  /* --- the LSWR boat train from Waterloo: a Drummond 4-4-0 in sage green and six salmon-and-umber carriages --- */
+  const TX = -12, LZ = 5.2, RAIL = 0.06;
+  const lswrGreen = phys({ color: 0x3f5c33, roughness: .35, clearcoat: .7, clearcoatRoughness: .18 });
+  const lswrBlack = phys({ color: 0x111111, roughness: .35, clearcoat: .6, clearcoatRoughness: .2 });
+  const smokeboxM = std({ color: 0x141414, roughness: .7, metalness: .2 });
+  const bufferRed = phys({ color: 0x8a1a14, roughness: .35, clearcoat: .6 });
+  const brassM = std({ color: 0xc9a050, metalness: 1, roughness: .25 }), copperM = std({ color: 0xb06a3a, metalness: 1, roughness: .3 });
+  const steelM = std({ color: 0x8a8a8a, metalness: .9, roughness: .3 });
+  const lined = (w, h, base, text) => { const C = canvas(w, h), g = C.getContext('2d');
+    g.fillStyle = base; g.fillRect(0, 0, w, h); g.fillStyle = '#4a2a18'; g.fillRect(0, 0, w, 14); g.fillRect(0, h - 14, w, 14); g.fillRect(0, 0, 14, h); g.fillRect(w - 14, 0, 14, h);
+    g.strokeStyle = '#111'; g.lineWidth = 6; g.strokeRect(20, 20, w - 40, h - 40); g.strokeStyle = '#f0ece0'; g.lineWidth = 2; g.strokeRect(27, 27, w - 54, h - 54);
+    if (text){ g.fillStyle = '#d8b050'; g.strokeStyle = '#3a2a10'; g.lineWidth = 3; g.font = `bold ${h * .26 | 0}px Georgia, serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.strokeText(text, w / 2, h / 2); g.fillText(text, w / 2, h / 2); }
+    return phys({ map: ctex(C, true), roughness: .3, clearcoat: .8, clearcoatRoughness: .15 }); };
+  // spoked wheels, built once and instanced
+  function spokedGeo(r, n, w, weight){
+    const parts = [], tire = new THREE.CylinderGeometry(r, r, w, 36, 1, true); tire.rotateX(Math.PI / 2); parts.push(tire);
+    const flange = new THREE.CylinderGeometry(r * 1.07, r * 1.07, w * .25, 36); flange.rotateX(Math.PI / 2); flange.translate(0, 0, w * .4); parts.push(flange);
+    const rim = new THREE.TorusGeometry(r * .9, r * .07, 6, 36); parts.push(rim);
+    const hub = new THREE.CylinderGeometry(r * .17, r * .2, w * 1.2, 16); hub.rotateX(Math.PI / 2); parts.push(hub);
+    for (let i = 0; i < n; i++){ const sp = new THREE.BoxGeometry(r * .06, r * .78, w * .35); sp.translate(0, r * .5, 0); sp.rotateZ(i / n * Math.PI * 2); parts.push(sp); }
+    if (weight){ const sh = new THREE.Shape(); sh.absarc(0, 0, r * .86, -0.9, 0.9, false); sh.absarc(0, 0, r * .3, 0.9, -0.9, true); const cw = new THREE.ExtrudeGeometry(sh, { depth: w * .3, bevelEnabled: false }); cw.rotateZ(Math.PI * 1.5); cw.translate(0, 0, -w * .15); parts.push(cw);
+      const pin = new THREE.CylinderGeometry(r * .07, r * .07, w * 1.6, 10); pin.rotateX(Math.PI / 2); pin.translate(0, r * .45, 0); parts.push(pin); }
+    for (const p of parts){ p.deleteAttribute('uv'); if (p.index) continue; }
+    const g = mergeGeometries(parts.map(p => p.index ? p.toNonIndexed() : p)); g.rotateY(Math.PI / 2); return g;
+  }
+  const wheelSets = [];
+  function wheels(geo, mat, list){ const m = new THREE.InstancedMesh(geo, mat, list.length), d = new THREE.Object3D(); list.forEach(([x, y, z, flip], i) => { d.position.set(x, y, z); d.rotation.set(0, flip ? Math.PI : 0, 0); d.updateMatrix(); m.setMatrixAt(i, d.matrix); }); m.castShadow = true; m.receiveShadow = true; S.add(m); return m; }
+
+  const L = new THREE.Group(); L.position.set(TX, 0, LZ); S.add(L);
+  const at = (o, x, y, z) => { o.position.set(x, y, z); L.add(o); o.castShadow = true; o.receiveShadow = true; return o; };
+  const B = (w, h, d, m, x, y, z) => at(new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m), x, y, z);
+  const Cz = (r1, r2, len, m, x, y, z, seg = 32) => { const c = new THREE.Mesh(new THREE.CylinderGeometry(r1, r2, len, seg), m); c.rotation.x = Math.PI / 2; return at(c, x, y, z); };
+  const Lathe = (pts, m, x, y, z) => at(new THREE.Mesh(new THREE.LatheGeometry(pts.map(p => new THREE.Vector2(p[0], p[1])), 32), m), x, y, z);
+  // buffer beam, buffers, coupling, lamps with white route discs
+  B(2.74, .42, .14, bufferRed, 0, 1.15, 0);
+  for (const sx of [-.87, .87]){ Cz(.09, .11, .45, steelM, sx, 1.08, -.25, 12); Cz(.2, .2, .05, steelM, sx, 1.08, -.48, 20); }
+  B(.12, .12, .3, steelM, 0, 1.0, -.18);
+  for (const [sx, sy] of [[-.7, 1.55], [.7, 1.55]]){ B(.04, .25, .04, lswrBlack, sx, sy - .05, .05); const disc = Cz(.2, .2, .03, std({ color: 0xf4f2ea, roughness: .5 }), sx, sy + .12, -.02, 24); }
+  // running plate, valance, frames
+  B(2.7, .07, 9.7, lswrBlack, 0, 1.42, 4.85);
+  for (const sx of [-1.33, 1.33]) B(.05, .3, 9.7, lined(1024, 64, '#3f5c33'), sx, 1.24, 4.85);
+  for (const sx of [-.62, .62]) B(.06, .9, 9.6, lswrBlack, sx, .9, 4.85);
+  // smokebox and door
+  Cz(.78, .78, 1.4, smokeboxM, 0, 2.55, 1.2);
+  Cz(.74, .74, .1, smokeboxM, 0, 2.55, .48, 40);
+  Cz(.62, .62, .06, lswrBlack, 0, 2.55, .42, 40);
+  for (const dy of [.3, -.3]) B(1.0, .06, .03, steelM, -.15, 2.55 + dy, .38);
+  Cz(.05, .05, .2, steelM, 0, 2.55, .32, 10);
+  B(1.7, .2, .6, smokeboxM, 0, 1.75, 1.0);
+  // boiler with polished bands, handrails, firebox
+  Cz(.72, .72, 4.9, lswrGreen, 0, 2.55, 4.35);
+  for (const z of [2.2, 3.4, 4.6, 5.8, 6.7]) Cz(.735, .735, .07, lswrBlack, 0, 2.55, z, 40);
+  for (const sx of [-.82, .82]) Cz(.02, .02, 6.3, steelM, sx, 2.85, 4.0, 6);
+  B(1.15, 1.0, 1.4, lswrGreen, 0, 1.95, 7.1);
+  // chimney with a copper-capped lip, dome with brass safety valves, whistle
+  Lathe([[.42, 0], [.3, .12], [.27, .3], [.27, .9], [.31, 1.0], [.34, 1.08], [.29, 1.1], [.25, 1.08], [0, 1.08]], lswrBlack, 0, 3.2, 1.05);
+  Lathe([[.0, 0], [.47, 0], [.45, .18], [.4, .42], [.3, .58], [.12, .66], [0, .67]], lswrGreen, 0, 3.15, 4.4);
+  for (const sx of [-.12, .12]) Lathe([[.07, 0], [.07, .25], [.1, .3], [.04, .38], [0, .38]], brassM, sx, 3.75, 4.4);
+  Lathe([[.05, 0], [.05, .2], [.09, .26], [.09, .42], [.03, .48], [0, .48]], brassM, .2, 3.6, 7.75);
+  // splashers over the 6 ft 7 in driving wheels, with brass beading
+  for (const sx of [-.74, .74]) for (const z of [5.0, 7.55]){
+    const sp = at(new THREE.Mesh(new THREE.CylinderGeometry(1.12, 1.12, .3, 32, 1, false, 0, Math.PI), lswrGreen), sx, 1.06, z); sp.rotation.z = Math.PI / 2;
+    const bd = at(new THREE.Mesh(new THREE.TorusGeometry(1.13, .02, 6, 32, Math.PI), brassM), sx + Math.sign(sx) * .16, 1.06, z); bd.rotation.y = Math.PI / 2;
+  }
+  // cab: lined side sheets with a gold number, round front windows, curved roof
+  const cabSide = lined(512, 384, '#3f5c33', '713');
+  for (const sx of [-1.3, 1.3]){ B(.06, 1.25, 1.3, cabSide, sx, 2.1, 8.55); B(.06, .7, .5, lswrGreen, sx, 3.05, 8.15); B(.04, .04, .9, brassM, sx * 1.02, 2.75, 9.1); }
+  B(2.66, 2.0, .06, lswrGreen, 0, 2.45, 7.85);
+  for (const sx of [-.6, .6]){ Cz(.18, .18, .08, std({ color: 0x0c1014, roughness: .1, metalness: .5 }), sx, 3.05, 7.82, 20); const rimc = at(new THREE.Mesh(new THREE.TorusGeometry(.19, .025, 6, 20), brassM), sx, 3.05, 7.8); }
+  const roof = at(new THREE.Mesh(new THREE.CylinderGeometry(4.2, 4.2, 2.2, 48, 1, true, Math.PI - 0.33, 0.66), lswrBlack), 0, -.4, 8.75); roof.rotation.set(Math.PI / 2, 0, 0); roof.material = std({ color: 0x1a1a1a, roughness: .7, side: THREE.DoubleSide });
+  // coupling rods (crank pins sit at the top of the wheels)
+  for (const sx of [-.9, .9]) B(.05, .12, 2.75, steelM, sx, 1.06 + .45, 6.28);
+  // Drummond eight-wheel "watercart" tender, lettered L S W R
+  const tenderSide = lined(1536, 384, '#3f5c33', 'L  S  W  R');
+  B(2.6, .1, 7.0, lswrBlack, 0, 1.4, 13.2);
+  for (const sx of [-1.3, 1.3]) B(.06, 1.7, 7.0, tenderSide, sx, 2.3, 13.2);
+  B(2.6, 1.7, .06, lswrGreen, 0, 2.3, 16.7); B(2.6, 1.0, .06, lswrGreen, 0, 1.95, 9.7);
+  for (const sx of [-1.36, 1.36]){ const fl = B(.05, .35, 7.0, lswrBlack, sx, 3.28, 13.2); fl.rotation.z = -Math.sign(sx) * .35; }
+  const coal = at(new THREE.Mesh((() => { const g = new THREE.PlaneGeometry(2.5, 5.6, 24, 40); const p = g.attributes.position; for (let i = 0; i < p.count; i++){ const x = p.getX(i), y = p.getY(i); p.setZ(i, .5 * Math.cos(x / 1.4) * Math.cos(y / 6) + rnd(0, .08)); } g.computeVertexNormals(); return g; })(), std({ color: 0x141416, roughness: .55, metalness: .3, flatShading: true })), 0, 3.05, 12.7); coal.rotation.x = -Math.PI / 2;
+  B(2.6, .3, .14, bufferRed, 0, 1.2, 16.78);
+  for (const sx of [-1.36, 1.36]) for (const z of [10.6, 15.8]) B(.05, .4, 1.6, lswrBlack, sx, 1.1, z);
+  // wheels: bogie, drivers, tender
+  const wMat = phys({ color: 0x3f5c33, roughness: .35, clearcoat: .6, metalness: .1 });
+  const tyreFix = (geo) => geo;
+  const lx = TX, wl = [];
+  const drv = [], bog = [], ten = [];
+  for (const s of [-1, 1]){
+    for (const z of [5.0, 7.55]) drv.push([lx + s * .72, RAIL + 1.0, LZ + z, s > 0]);
+    for (const z of [1.25, 3.05]) bog.push([lx + s * .72, RAIL + .55, LZ + z, s > 0]);
+    for (const z of [10.6, 11.9, 14.5, 15.8]) ten.push([lx + s * .72, RAIL + .58, LZ + z, s > 0]);
+  }
+  wheels(spokedGeo(1.0, 20, .14, true), wMat, drv);
+  wheels(spokedGeo(.55, 12, .12, false), wMat, bog);
+  wheels(spokedGeo(.58, 12, .12, false), lswrBlack, ten);
+
+  // carriages: salmon upper and umber lower panels, gilt lining, door droplights, arc roofs, gas-lamp tops, bogies
+  const carriageSide = (() => { const W = 2048, H = 340, C = canvas(W, H), g = C.getContext('2d'), m = W / 15;
+    g.fillStyle = '#4e2618'; g.fillRect(0, 0, W, H);
+    g.fillStyle = '#d99a78'; g.fillRect(0, 0, W, H * .5);
+    g.fillStyle = '#3a1a10'; g.fillRect(0, H * .5 - 3, W, 6);
+    const doorAt = []; for (let x = m * .9; x < W - m; x += m * 2.15) doorAt.push(x);
+    for (const x of doorAt){
+      g.strokeStyle = '#1a0c06'; g.lineWidth = 4; g.strokeRect(x, 14, m * .78, H - 30);
+      g.fillStyle = '#10161c'; g.fillRect(x + 10, 30, m * .78 - 20, H * .32);
+      g.fillStyle = 'rgba(160,190,210,.25)'; g.fillRect(x + 12, 32, m * .3, H * .1);
+      g.fillStyle = '#c9a050'; g.fillRect(x + m * .62, H * .55, 10, 22); g.fillRect(x - 6, H * .2, 4, H * .5); g.fillRect(x + m * .78 + 2, H * .2, 4, H * .5);
+      g.fillStyle = '#d8b050'; g.font = `bold ${H * .07 | 0}px Georgia, serif`; g.textAlign = 'center'; g.fillText('1', x + m * .39, H * .74);
     }
-    box(2.6, 2.0, 5.4, locoGreen, 0, 2.15, 12.6, L); box(2.3, .4, 4.6, std({ color: 0x0c0c0c, roughness: 1 }), 0, 3.3, 12.4, L);
+    for (let i = 0; i < doorAt.length - 1; i++){ const x0 = doorAt[i] + m * .9, x1 = doorAt[i + 1] - m * .12; g.fillStyle = '#10161c'; g.beginPath(); g.roundRect ? g.roundRect(x0, 30, x1 - x0, H * .32, 14) : g.rect(x0, 30, x1 - x0, H * .32); g.fill(); g.fillStyle = 'rgba(160,190,210,.2)'; g.fillRect(x0 + 6, 34, (x1 - x0) * .4, H * .1); }
+    g.strokeStyle = '#d8b050'; g.lineWidth = 2; g.strokeRect(6, 6, W - 12, H - 12); g.beginPath(); g.moveTo(0, H * .5 + 8); g.lineTo(W, H * .5 + 8); g.stroke();
+    
+    return ctex(C, true); })();
+  const carSideM = phys({ map: carriageSide, roughness: .3, clearcoat: .7, clearcoatRoughness: .2 });
+  const carEndM = phys({ color: 0x4e2618, roughness: .35, clearcoat: .6 }), roofM = std({ color: 0x8a8a84, roughness: .85 });
+  const carWheels = [];
+  for (let i = 0; i < 6; i++){
+    const cz = 26 + i * 15.8, C = new THREE.Group(); C.position.set(TX, 0, cz); S.add(C);
+    const cb = (w, h, d, m, x, y, z) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); o.castShadow = o.receiveShadow = true; C.add(o); return o; };
+    cb(2.7, 2.5, 15, [carSideM, carSideM, roofM, lswrBlack, carEndM, carEndM], 0, 2.35, 0);
+    const rf = new THREE.Mesh(new THREE.CylinderGeometry(3.4, 3.4, 15.2, 48, 1, false, Math.PI - 0.41, 0.82), roofM); rf.rotation.set(Math.PI / 2, 0, 0); rf.position.set(0, .48, 0); rf.castShadow = true; C.add(rf);
+    for (let k = -6; k <= 6; k += 2){ const lp = new THREE.Mesh(new THREE.CylinderGeometry(.09, .13, .14, 10), lswrBlack); lp.position.set(0, 3.95, k); C.add(lp); }
+    for (let k = -7; k <= 7; k += 1.4) for (const sx of [-.7, .7]){ const v = new THREE.Mesh(new THREE.SphereGeometry(.07, 8, 6), roofM); v.position.set(sx, 3.86, k); v.scale.set(1, .6, 2.2); C.add(v); }
+    for (const sx of [-1.42, 1.42]){ cb(.22, .04, 14.4, std({ color: 0x3a2a1c, roughness: .9 }), sx, .95, 0); cb(.18, .04, 14.4, std({ color: 0x3a2a1c, roughness: .9 }), sx * .97, .62, 0); }
+    cb(2.4, .24, 15, lswrBlack, 0, 1.0, 0);
+    for (const ez of [-7.62, 7.62]){ cb(1.1, 2.0, .3, std({ color: 0x1a1a1a, roughness: .9 }), 0, 2.2, ez); for (const sx of [-.87, .87]){ const b = new THREE.Mesh(new THREE.CylinderGeometry(.09, .11, .4, 12), steelM); b.rotation.x = Math.PI / 2; b.position.set(sx, 1.08, ez + Math.sign(ez) * .2); C.add(b); const h = new THREE.Mesh(new THREE.CylinderGeometry(.19, .19, .04, 20), steelM); h.rotation.x = Math.PI / 2; h.position.set(sx, 1.08, ez + Math.sign(ez) * .42); C.add(h); } }
+    for (const bz of [-5, 5]){
+      cb(2.3, .22, 3.2, lswrBlack, 0, .78, bz);
+      for (const sx of [-1.12, 1.12]){ cb(.08, .32, 3.2, lswrBlack, sx, .62, bz); for (const dz of [-.95, .95]){ const spr = cb(.12, .07, .8, steelM, sx, .9, bz + dz); } }
+      for (const s of [-1, 1]) for (const dz of [-.95, .95]) carWheels.push([TX + s * .72, RAIL + .48, cz + bz + dz, s > 0]);
+    }
   }
-  for (let i = 0; i < 6; i++){ // carriages
-    const cz = 24.5 + i * 15.8, C = new THREE.Group(); C.position.set(TX, 0, cz); S.add(C);
-    box(2.7, 2.6, 15, [carSideM, carSideM, roofM, locoBlack, carEndM, carEndM], 0, 2.2, 0, C);
-    const rf = cyl(1.45, 1.45, 15.2, roofM, 0, 3.5, 0, C, 20); rf.rotation.x = Math.PI / 2; rf.scale.set(1, 1, .22);
-    for (const bz of [-5, 5]){ box(2.2, .5, 2.6, locoBlack, 0, .85, bz, C); for (const sx of [-1, 1]) for (const dz of [-.9, .9]) wheel(C, sx * .78, .48, bz + dz, .48, locoBlack); }
-    for (const ez of [-7.6, 7.6]) for (const sx of [-1, 1]){ const b = cyl(.13, .13, .4, locoBlack, sx * .8, 1.2, ez, C, 10); b.rotation.x = Math.PI / 2; }
-  }
+  // Mansell wooden-centred carriage wheels
+  const mansell = (() => { const parts = []; const t = new THREE.CylinderGeometry(.48, .48, .13, 30, 1, true); t.rotateX(Math.PI / 2); parts.push(t); const d = new THREE.CylinderGeometry(.44, .44, .06, 30); d.rotateX(Math.PI / 2); parts.push(d); const hb = new THREE.CylinderGeometry(.09, .1, .2, 12); hb.rotateX(Math.PI / 2); parts.push(hb); const f = new THREE.CylinderGeometry(.52, .52, .03, 30); f.rotateX(Math.PI / 2); f.translate(0, 0, .055); parts.push(f); parts.forEach(p => p.deleteAttribute('uv')); const g = mergeGeometries(parts.map(p => p.index ? p.toNonIndexed() : p)); g.rotateY(Math.PI / 2); return g; })();
+  wheels(mansell, std({ color: 0x2a2018, roughness: .7 }), carWheels);
+  // porters with luggage barrows beside the train
+  const barrow = (x, z, ry) => { const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; const bm = std({ color: 0x6a5038, roughness: .85 });
+    const bb = new THREE.Mesh(new THREE.BoxGeometry(.8, .06, 1.6), bm); bb.position.y = .35; g.add(bb);
+    for (const sx of [-.42, .42]){ const h = new THREE.Mesh(new THREE.BoxGeometry(.04, .04, 1.1), bm); h.position.set(sx, .65, -1.1); h.rotation.x = -.45; g.add(h); const wh = new THREE.Mesh(new THREE.CylinderGeometry(.2, .2, .05, 16), lswrBlack); wh.rotation.z = Math.PI / 2; wh.position.set(sx, .2, .5); g.add(wh); }
+    for (let k = 0; k < 4; k++){ const t = new THREE.Mesh(new THREE.BoxGeometry(rnd(.5, .75), rnd(.3, .45), rnd(.45, .6)), trunkM[k % 3]); t.position.set(rnd(-.08, .08), .55 + (k > 1 ? .4 : 0), -.4 + (k % 2) * .75); t.rotation.y = rnd(-.2, .2); g.add(t); }
+    g.traverse(o => { if (o.isMesh){ o.castShadow = true; o.receiveShadow = true; } }); S.add(g); };
+  barrow(-9.4, 30, .1); barrow(-9.6, 47, -.15);
+  const po1 = person(false, 0x2a2c34, S, { outfit: 'sailor', pose: 'front' }); po1.position.set(-9.4, 0, 28.4); po1.rotation.y = .1;
+  const po2 = person(false, 0x2a2c34, S, { outfit: 'sailor', pose: 'idle' }); po2.position.set(-9.9, 0, 45.3); po2.rotation.y = Math.PI - .4;
   const trainPuffs = []; for (let k = 0; k < 8; k++){ const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: puffT, color: 0xd8d6d2, transparent: true, depthWrite: false, opacity: .35 })); sp.userData = { age: k * .9 }; S.add(sp); trainPuffs.push(sp); }
 
   // tugs standing by at the bow and stern
@@ -1637,7 +1838,7 @@ function buildDock(ch){
       const flap = Math.sin(t * .4 + gl.ph) > .2 ? Math.sin(t * 8 + gl.ph) * .55 : .08;
       for (const [piv, s] of gl.wings) piv.rotation.z = s * flap;
     }
-    for (const sp of trainPuffs){ const u = sp.userData; u.age += dt; if (u.age > 7.2) u.age -= 7.2; const ag = u.age; sp.position.set(TX + Math.sin(ag + 1) * .3, 3.9 + ag * 1.1, 7 + ag * .9); const k = 1.2 + ag * 1.1; sp.scale.set(k, k, 1); sp.material.opacity = .35 * Math.min(1, ag * 3) * (1 - ag / 7.2); }
+    for (const sp of trainPuffs){ const u = sp.userData; u.age += dt; if (u.age > 7.2) u.age -= 7.2; const ag = u.age; sp.position.set(TX + Math.sin(ag + 1) * .3, 4.4 + ag * 1.1, LZ + 1.05 + ag * .9); const k = 1.2 + ag * 1.1; sp.scale.set(k, k, 1); sp.material.opacity = .35 * Math.min(1, ag * 3) * (1 - ag / 7.2); }
     for (const sp of tugs){ const u = sp.userData; u.age += dt; if (u.age > 7.2) u.age -= 7.2; const ag = u.age; sp.position.set(Math.sin(ag) * .4, 9.8 + ag * 1.6, 3 + ag * 1.5); u.t.localToWorld(sp.position); const k = 1.6 + ag * 1.3; sp.scale.set(k, k, 1); sp.material.opacity = .4 * Math.min(1, ag * 3) * (1 - ag / 7.2); }
     crowdTick(t);
     // sounds
@@ -1691,7 +1892,7 @@ function buildIce(ch){
   { const mirrorRes = LOW ? 512 : 1024, orig = water.onBeforeRender, db = new THREE.Vector2();
     water.onBeforeRender = function (...args){ R.getDrawingBufferSize(db); starMat.uniforms.uScale.value = Math.min(1, mirrorRes / Math.max(1, db.y)); orig.apply(this, args); starMat.uniforms.uScale.value = 1; }; }
 
-  S.add(new THREE.HemisphereLight(0x6a7894, 0x050608, 1.1));
+  S.add(new THREE.HemisphereLight(0x7a88a4, 0x050608, 1.35));
   S.add(new THREE.AmbientLight(0x1a2236, 0.6));
 
   const black = std({ color: 0x0c0c0d, roughness: .45 }), paint = std({ color: 0xe8e3d6, roughness: .5 });
@@ -1739,25 +1940,98 @@ function buildIce(ch){
   const fl = new THREE.PointLight(0xffc887, 6, 22, 2); fl.position.set(0, 1.8, 19.6); S.add(fl);
   sph(0.1, std({ color: 0xffeecc, emissive: 0xffd08a, emissiveIntensity: 6 }), 0, 1.8, 19.8, S);
 
-  // superstructure with lit windows, bridge, funnels
-  const wallSet = makeWall();
+  // superstructure: stepped decks with sparse lit cabins, an open promenade, the bridge and its wings, lifeboats and funnels
   box(25, 15, 190, black, 0, -7.5, 145, S);
-  for (const s of [-1, 1]){
-    const pm = std(Object.assign(rep(port, 190 / 16, 1), { color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 2, roughness: .5 }));
-    plane(190, 12, pm, s * 12.52, -8, 145, s * Math.PI / 2, 0, S);
+  for (const sd of [-1, 1]){
+    const pm = std(Object.assign(rep(port, 190 / 16, 1), { color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 1.4, roughness: .5 }));
+    plane(190, 12, pm, sd * 12.52, -8, 145, sd * Math.PI / 2, 0, S);
   }
-  box(24, 14, 170, paint, 0, 7, 135, S);
-  const front = std(Object.assign(rep(wallSet, 24 / 6, 14 / 3), { emissive: 0xffffff, emissiveIntensity: 2.4 }));
-  plane(24, 14, front, 0, 7, 49.98, Math.PI, 0, S);
-  for (const s of [-1, 1]){ const side = std(Object.assign(rep(wallSet, 170 / 6, 14 / 3), { emissive: 0xffffff, emissiveIntensity: 2.4 })); plane(170, 14, side, s * 12.02, 7, 135, s * Math.PI / 2, 0, S); }
-  box(28, 2.8, 5, paint, 0, 15.4, 53, S);
-  const bridgeW = std(Object.assign(rep(wallSet, 4, 1), { emissive: 0xffffff, emissiveIntensity: 1.2 }));
-  plane(20, 2.8, bridgeW, 0, 15.4, 50.48, Math.PI, 0, S);
+  function tierTex(kind){                                    // one texture tile = 32 m of wall, 2.8 m tall
+    const W = 2048, H = 180, C = canvas(W, H), E = canvas(W, H), c = C.getContext('2d'), e = E.getContext('2d'), m = W / 32;
+    c.fillStyle = '#e6e2d6'; c.fillRect(0, 0, W, H); e.fillStyle = '#000'; e.fillRect(0, 0, W, H);
+    blobs(c, W, H, 40, () => [150, 140, 120, rnd(.04, .1)], 20, 80);
+    c.fillStyle = 'rgba(110,100,86,.35)'; for (let x = 0; x < W; x += m * 3) c.fillRect(x, 0, 2, H);
+    c.fillStyle = 'rgba(90,82,70,.5)'; c.fillRect(0, H - 5, W, 5);
+    const win = (x, y, w, h, round) => {
+      const lit = Math.random() < (kind === 'w' ? .25 : .42), k = rnd(.45, 1);
+      c.fillStyle = '#4c4840'; if (round){ c.beginPath(); c.arc(x + w / 2, y + h / 2, w / 2 + 3, 0, 7); c.fill(); } else c.fillRect(x - 3, y - 3, w + 6, h + 6);
+      c.fillStyle = '#12161b'; if (round){ c.beginPath(); c.arc(x + w / 2, y + h / 2, w / 2, 0, 7); c.fill(); } else c.fillRect(x, y, w, h);
+      if (lit){
+        const g = e.createLinearGradient(0, y, 0, y + h); g.addColorStop(0, `rgba(255,${200 + 30 * k | 0},${120 + 40 * k | 0},${k})`); g.addColorStop(1, `rgba(190,110,50,${k * .8})`);
+        e.fillStyle = g; if (round){ e.beginPath(); e.arc(x + w / 2, y + h / 2, w / 2, 0, 7); e.fill(); } else e.fillRect(x, y, w, h);
+        if (!round && Math.random() < .5){ e.fillStyle = 'rgba(40,20,8,.75)'; e.fillRect(x, y, w * rnd(.2, .45), h); }
+      }
+      if (!round){ c.fillStyle = '#4c4840'; c.fillRect(x + w / 2 - 1.5, y, 3, h); e.fillStyle = '#000'; e.fillRect(x + w / 2 - 1.5, y, 3, h); }
+    };
+    if (kind === 'b') for (let x = m * .8; x < W - m; x += m * 1.7 + (Math.random() < .2 ? m * 1.7 : 0)) win(x, H * .3, m * .7, H * .38);
+    if (kind === 'a') for (let x = m * .6; x < W - m; x += m * 2.3) win(x, H * .16, m * 1.7, H * .52);
+    if (kind === 'c') for (let x = m * .7; x < W - m; x += m * 1.3) win(x, H * .38, m * .34, m * .34, true);
+    if (kind === 'w') for (let x = m * .5; x < W - m; x += m * 1.05) win(x, H * .2, m * .78, H * .42);
+    return { map: ctex(C, true), emissiveMap: ctex(E, true) };
+  }
+  const T = { b: tierTex('b'), a: tierTex('a'), c: tierTex('c'), w: tierTex('w') };
+  const tierM = (k, len) => std(Object.assign(rep(T[k], len / 32, 1), { emissive: 0xffffff, emissiveIntensity: 1.1, roughness: .55 }));
+  const Z0 = 50, Z1 = 220, LEN = Z1 - Z0, ZC = (Z0 + Z1) / 2;
+  // lower tiers (C and B deck) rise from the well deck as one white block
+  box(24, 5.6, LEN, paint, 0, 0.2, ZC, S);
+  plane(24.02, 2.8, tierM('c', 24), 0, -1.2, Z0 - 0.02, Math.PI, 0, S);
+  plane(24.02, 2.8, tierM('b', 24), 0, 1.6, Z0 - 0.02, Math.PI, 0, S);
+  for (const sd of [-1, 1]) plane(LEN, 2.8, tierM('b', LEN), sd * 12.02, 1.6, ZC, sd * Math.PI / 2, 0, S);
+  box(24.4, .12, .2, paint, 0, 3.0, Z0 - .05, S);
+  // A deck: enclosed front, then a promenade open to the sea along both sides
+  box(21.4, 2.8, LEN - 3, paint, 0, 4.4, ZC + 1.5, S);
+  plane(24, 2.8, tierM('a', 24), 0, 4.4, Z0 - 0.02, Math.PI, 0, S);
+  for (const sd of [-1, 1]){
+    box(1.3, 2.8, 3, paint, sd * 11.35, 4.4, Z0 + 1.5, S);
+    plane(LEN - 3, 2.8, tierM('a', LEN - 3), sd * 10.72, 4.4, ZC + 1.5, sd * Math.PI / 2, 0, S);
+    const nP = Math.floor((LEN - 4) / 2.4), posts = new THREE.InstancedMesh(new THREE.BoxGeometry(.16, 2.8, .16), paint, nP), dm = new THREE.Object3D();
+    for (let i = 0; i < nP; i++){ dm.position.set(sd * 11.9, 4.4, Z0 + 3.5 + i * 2.4); dm.updateMatrix(); posts.setMatrixAt(i, dm.matrix); }
+    posts.castShadow = true; S.add(posts);
+    box(.08, .08, LEN - 3, teak, sd * 11.9, 4.0, ZC + 1.5, S); box(.04, .04, LEN - 3, paint, sd * 11.9, 3.55, ZC + 1.5, S);
+    for (let z = Z0 + 6; z < Z1; z += 7.2) sph(.07, std({ color: 0xfff0d0, emissive: 0xffd08a, emissiveIntensity: 4 }), sd * 11.2, 5.62, z, S);
+  }
+  // boat deck
+  box(24.6, .25, LEN + .4, std({ color: 0xd8d2c4, roughness: .8 }), 0, 5.92, ZC, S);
+  const bdRail = (x, z0, z1) => { box(.05, .05, z1 - z0, paint, x, 7.0, (z0 + z1) / 2, S); for (let z = z0; z <= z1; z += 1.6) cyl(.02, .02, 1.0, paint, x, 6.5, z, S, 5); };
+  for (const sd of [-1, 1]) bdRail(sd * 12.15, Z0 + 10, Z1 - 2);
+  // bridge: wheelhouse, officers' quarters behind, open bridge wings reaching past the hull
+  box(13, 2.8, 4.5, paint, 0, 7.45, Z0 + 3.4, S);
+  plane(13.02, 2.8, tierM('w', 13), 0, 7.45, Z0 + 1.13, Math.PI, 0, S);
+  box(14, 2.8, 22, paint, 0, 7.45, Z0 + 16.5, S);
+  for (const sd of [-1, 1]) plane(22, 2.8, tierM('b', 22), sd * 7.02, 7.45, Z0 + 16.5, sd * Math.PI / 2, 0, S);
+  box(14.6, .2, 27.4, paint, 0, 8.95, Z0 + 14.2, S);
+  box(28.6, .18, 2.2, std({ color: 0xd8d2c4, roughness: .8 }), 0, 6.1, Z0 + 1.9, S);
+  box(28.6, 1.1, .08, paint, 0, 6.7, Z0 + .85, S);
+  for (const sd of [-1, 1]){
+    box(1.6, 2.2, 2.2, paint, sd * 13.5, 7.25, Z0 + 1.9, S);
+    plane(1.4, .7, std({ color: 0x0e1218, emissive: 0x3a2a18, emissiveIntensity: .35, roughness: .2 }), sd * 13.5, 7.6, Z0 + .78, Math.PI, 0, S);
+  }
   const red = std({ color: 0xff2a1a, emissive: 0xff2010, emissiveIntensity: 8 }), green = std({ color: 0x20ff60, emissive: 0x10ff50, emissiveIntensity: 8 });
-  sph(0.22, red, -14.1, 15.6, 52, S); sph(0.22, green, 14.1, 15.6, 52, S);
-  const gl = new THREE.PointLight(0x30ff70, 30, 60, 1.6); gl.position.set(15, 15.6, 52); S.add(gl);
+  sph(0.18, red, -14.35, 7.6, Z0 + 2.2, S); sph(0.18, green, 14.35, 7.6, Z0 + 2.2, S);
+  const gl = new THREE.PointLight(0x30ff70, 5, 9, 2); gl.position.set(15.2, 7.6, Z0 + 1.6); S.add(gl);
+  // lifeboats along the boat deck
+  const bGeo2 = boatGeometry(8.4, 2.2, 1.0), cGeo2 = coverGeometry(8.4, 2.2), boatM2 = std({ color: 0xe8e4da, roughness: .5, side: THREE.DoubleSide }), canvasM2 = std({ color: 0xbcb294, roughness: .95 });
+  for (const sd of [-1, 1]) for (const z of [74, 83.5, 93, 102.5, 168, 177.5, 187, 196.5]){
+    const bt = new THREE.Group(); bt.position.set(sd * 10.9, 7.1, z); mesh(bGeo2, boatM2, 0, 0, 0, bt); mesh(cGeo2, canvasM2, 0, 0, 0, bt); S.add(bt);
+    for (const dz of [-3.9, 3.9]){
+      const cv = new THREE.CatmullRomCurve3([new THREE.Vector3(sd * 12.0, 6.05, z + dz), new THREE.Vector3(sd * 12.0, 7.9, z + dz), new THREE.Vector3(sd * 11.85, 8.6, z + dz), new THREE.Vector3(sd * 11.3, 8.9, z + dz), new THREE.Vector3(sd * 10.9, 8.85, z + dz)]);
+      mesh(new THREE.TubeGeometry(cv, 16, 0.08, 6), paint, 0, 0, 0, S);
+    }
+  }
+  // ventilator cowls and skylights on the boat deck
+  for (const [x, z, ry] of [[-6, 70, 0], [6, 70, 0], [-5, 112, Math.PI], [5, 112, Math.PI], [-6, 140, 0], [6, 140, 0], [-5, 162, Math.PI], [5, 162, Math.PI]]){
+    const g = new THREE.Group(); g.position.set(x, 6.05, z); g.rotation.y = ry; cyl(.32, .36, 1.8, paint, 0, .9, 0, g, 14);
+    mesh(new THREE.TorusGeometry(.45, .32, 10, 14, Math.PI / 2), paint, 0, 1.8, -.45, g).rotation.y = Math.PI / 2;
+    const mo = cyl(.55, .4, .4, paint, 0, 2.25, -.62, g, 16); mo.rotation.x = Math.PI / 2; S.add(g);
+  }
+  for (const z of [88, 118, 146]) box(4, .7, 6, std({ color: 0x8a6a48, emissive: 0x5a3a18, emissiveIntensity: .5, roughness: .6 }), 0, 6.4, z, S);
+  // funnels rise from the boat deck
   const funnelM = std({ color: 0x6a4a28, roughness: .6 });
-  for (const z of [78, 103, 128, 153]){ const f = cyl(1, 1, 22, funnelM, 0, 25, z, S, 32); f.scale.set(2.6, 1, 3.4); f.rotation.x = 0.1; const t2 = cyl(1.005, 1.005, 4.5, black, 0, 34, z + 0.9, S, 32); t2.scale.set(2.6, 1, 3.4); t2.rotation.x = 0.1; }
+  for (const z of [92, 117, 142, 167]){
+    const f = cyl(1, 1, 21, funnelM, 0, 16.5, z, S, 32); f.scale.set(2.6, 1, 3.4); f.rotation.x = 0.1;
+    const t2 = cyl(1.005, 1.005, 4.5, black, 0, 25.0, z + 0.9, S, 32); t2.scale.set(2.6, 1, 3.4); t2.rotation.x = 0.1;
+    for (const dx of [-0.7, 0, 0.7]) cyl(.16, .16, 19, funnelM, dx, 16, z - 3.4, S, 8);
+  }
   // foremast, crow's nest, masthead light, stays
   const buff = std({ color: 0x8a6a40, roughness: .6 });
   cyl(0.38, 0.5, 36, buff, 0, 15.4, 26.2, S, 16);
@@ -1869,14 +2143,20 @@ const CH = {
     lines: [
       'The forward Grand Staircase. Oak panelling, wrought-iron balustrades and a glass dome bringing light down from the boat deck.',
       'Look up. The dome was wrought iron and glass, with a chandelier hanging at its centre.',
-      'Walk up the stairs. The carved panel on the landing is called Honour and Glory Crowning Time.',
+      'Corridors either side lead to first-class staterooms. Behind you, the doors open onto the reception room, where passengers met before dinner.',
+      'Walk up the stairs. The carved panel on the landing is called Honour and Glory Crowning Time. Archways either side of it lead along to the staterooms.',
       'First-class passengers gathered here in evening dress before going down to the dining saloon on D deck.',
       'Tonight’s first-class dinner ran to ten courses. The collision is four and a half hours away.'
     ],
     constrain(o, n){
       n.z = clamp(n.z, -8.6, 7.5);
-      if (n.z < -1){ if (o.z >= -1 && Math.abs(n.x) > 2.55) n.z = -1; else n.x = clamp(n.x, -2.55, 2.55); }
-      else n.x = clamp(n.x, -7.4, 7.4);
+      if (n.z < -1){
+        const inCor2 = n.z < -6.8 && n.z > -8.6 && o.y > 2.85;
+        if (o.z >= -1 && Math.abs(n.x) > 2.55) n.z = -1;
+        else if (Math.abs(o.x) > 2.6){ n.z = clamp(n.z, -8.6, -6.8); n.x = clamp(n.x, -12.6, 12.6); }
+        else n.x = clamp(n.x, inCor2 ? -12.6 : -2.55, inCor2 ? 12.6 : 2.55);
+      }
+      else { const inCor = n.z > 2.6 && n.z < 4.4; n.x = clamp(n.x, inCor ? -15.4 : -7.4, inCor ? 15.4 : 7.4); if (Math.abs(o.x) > 7.5) n.z = clamp(n.z, 2.6, 4.4); }
       const ramp = n.z > -1 ? 0 : n.z > -6.4 ? (-1 - n.z) / 5.4 * 3 : 3;
       n.y = Math.max(ramp, fanH(n.x, n.z));
     }
@@ -1902,10 +2182,10 @@ const CH = {
       'The blue flag with a white square at the foremast is the Blue Peter, the signal that a ship is about to sail.',
       'Around 920 passengers board at Southampton, many of them emigrants travelling third class to start new lives in America.',
       'Captain Edward Smith, the White Star Line\u2019s most senior captain, is on the bridge.',
-      'Behind you, a boat train from Waterloo waits on the quay rails. Ahead, tugs stand by at bow and stern, and the American liner New York lies moored further along the dock.',
+      'Behind you, the London and South Western Railway boat train from Waterloo waits on the quay rails, hauled by a Drummond express engine in the company\u2019s sage green. Ahead, tugs stand by at bow and stern, and the American liner New York lies moored further along the dock.',
       'At noon her whistles sound and tugs ease her out. Her wash snaps the mooring ropes of the liner New York, which swings toward her and only just misses.'
     ],
-    constrain(o, n){ n.x = clamp(n.x, -27, 4.8); n.z = clamp(n.z, -128, 128); n.y = 0; if (n.z > 5.5 && n.z < 117 && n.x > -13.8 && n.x < -10.2){ n.x = o.x; if (o.x > -13.8 && o.x < -10.2) n.z = o.z; } }
+    constrain(o, n){ n.x = clamp(n.x, -27, 4.8); n.z = clamp(n.z, -128, 128); n.y = 0; if (n.z > 4.2 && n.z < 113.5 && n.x > -13.8 && n.x < -10.2){ n.x = o.x; if (o.x > -13.8 && o.x < -10.2) n.z = o.z; } }
   }
 };
 const ORDER = ['deck', 'stairs', 'ice', 'dock'];
@@ -2139,8 +2419,8 @@ const VOICE = [
   ['walk', /\b(walk|walking|go|start|forward|move|onwards?|keep going)\b/g],
   ['next', /\bnext\b/g],
   ['replay', /\b(replay|again|restart)\b/g],
-  ['nest', /\b(crow'?s ?nest|lookout|look out|up the mast)\b/g],
-  ['down', /\b(forecastle|go down|bow)\b/g]
+  ['nest', /\b(crow'?s'? ?nest|crow nest|cross nest|the nest|lookout|look out|up the mast|climb up|go up)\b/g],
+  ['down', /\b(forecastle|go down|climb down|back down|the bow|bow)\b/g]
 ];
 function turnBy(r){ if (R.xr.isPresenting) rig.rotation.y += r; else if (goggles) yawOff = (yawOff === null ? 0 : yawOff) + r; else player.yaw += r; }
 function runCmd(c){
@@ -2152,7 +2432,7 @@ function runCmd(c){
   else if (c === 'around') turnBy(Math.PI);
   else if (c === 'next') nextChapter();
   else if (c === 'replay'){ if (cur && cur.reset){ cur.reset(); setAmbience(curId); } }
-  else if (c === 'nest'){ if (curId === 'ice' && !CH.ice.nest) toggleNest(); }
+  else if (c === 'nest'){ if (curId !== 'ice') go('ice'); if (!CH.ice.nest) toggleNest(); }
   else if (c === 'down'){ if (curId === 'ice' && CH.ice.nest) toggleNest(); }
   else if (c === 'gwider') gogAdj('sep', 1); else if (c === 'gnarrower') gogAdj('sep', -1);
   else if (c === 'gzoomin') gogAdj('dist', 2); else if (c === 'gzoomout') gogAdj('dist', -2);
