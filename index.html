@@ -77,18 +77,18 @@ body.goggles .hud,body.goggles #caption,body.goggles #joy,body.goggles #hint{dis
 #menu{position:absolute;inset:0;overflow:auto;display:grid;place-items:center;
   background:radial-gradient(120% 90% at 50% 0%,rgba(19,33,45,.45),rgba(10,20,29,.88));
   padding:28px max(16px,env(safe-area-inset-right,0px)) 28px max(16px,env(safe-area-inset-left,0px))}
-.card{width:min(820px,100%);display:grid;gap:22px}
+.card{width:min(940px,100%);display:grid;gap:22px}
 .line{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
 h1{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(2.6rem,9vw,5rem);line-height:.95;letter-spacing:.01em;text-wrap:balance}
 .lede{margin:0;max-width:58ch;font-size:1.08rem;line-height:1.55;color:#dcd3bf}
-.tickets{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-.ticket{position:relative;text-align:left;color:var(--paper);background:linear-gradient(180deg,var(--ink-2),#0e1a24);
+.tickets{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.ticket{min-width:0;position:relative;text-align:left;color:var(--paper);background:linear-gradient(180deg,var(--ink-2),#0e1a24);
   border:1px solid rgba(201,162,91,.38);border-radius:3px;padding:18px 18px 16px;cursor:pointer;display:grid;gap:8px;
   font:inherit;transition:transform .2s,border-color .2s}
 .ticket::before{content:"";position:absolute;left:0;right:0;top:58px;border-top:1px dashed rgba(201,162,91,.35)}
 .ticket:hover{border-color:var(--brass);transform:translateY(-2px)}
-.ticket .no{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;white-space:nowrap;text-transform:uppercase;color:var(--brass);display:flex;justify-content:space-between;gap:8px}
-.ticket .t{font-family:var(--display);font-size:1.6rem;line-height:1.05;margin-top:14px}
+.ticket .no{font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;flex-wrap:wrap;row-gap:2px;text-transform:uppercase;color:var(--brass);display:flex;justify-content:space-between;gap:8px}
+.ticket .t{font-family:var(--display);font-size:1.4rem;line-height:1.05;margin-top:14px}
 .ticket .p{font-size:.92rem;line-height:1.45;color:#cfc6b2}
 .ticket .go{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--rust)}
 .foot{margin:0;font-family:var(--mono);font-size:.72rem;line-height:1.6;color:var(--mist);letter-spacing:.03em}
@@ -109,6 +109,7 @@ h1{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(2.6rem,9v
       <button class="chip" id="bGog" type="button">Goggles</button>
       <button class="chip" id="bVR" type="button" hidden>Enter VR</button>
       <button class="chip" id="bView" type="button" hidden>Crow’s nest</button>
+      <button class="chip" id="bToast" type="button" hidden>Toast</button>
       <button class="chip" id="bReplay" type="button" hidden>Replay</button>
       <button class="chip" id="bNext" type="button">Next</button>
       <button class="chip" id="bMenu" type="button">Chapters</button>
@@ -135,31 +136,37 @@ h1{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(2.6rem,9v
     <div class="card">
       <div class="line">White Star Line · Southampton to New York · April 1912</div>
       <h1>Titanic Voyage</h1>
-      <p class="lede">Walk the boat deck at sunset on the last evening, stand at the foot of the Grand Staircase, then stand on the bow at 11:39 pm as the iceberg looms out of the dark. Or go back to the quay at Southampton on the morning she sailed.</p>
+      <p class="lede">Stand on the quay at Southampton as she is loaded, walk the boat deck at sunset on the last evening, climb the Grand Staircase, raise a glass in the first-class Dining Saloon, then stand on the bow at 11:39 pm as the iceberg looms out of the dark.</p>
       <div class="tickets">
+        <button class="ticket" type="button" data-go="dock">
+          <span class="no"><span>Chapter I</span><span>10 Apr 1912</span></span>
+          <span class="t">Departure Day</span>
+          <span class="p">Cargo swings aboard at Southampton as passengers wave from the boat deck.</span>
+          <span class="go">Go to the quay →</span>
+        </button>
         <button class="ticket" type="button" data-go="deck">
-          <span class="no"><span>Chapter I</span><span>14 Apr 1912</span></span>
+          <span class="no"><span>Chapter II</span><span>14 Apr 1912</span></span>
           <span class="t">Boat Deck at Sunset</span>
           <span class="p">Lifeboats, four funnels and the North Atlantic turning gold.</span>
           <span class="go">Board →</span>
         </button>
         <button class="ticket" type="button" data-go="stairs">
-          <span class="no"><span>Chapter II</span><span>19:15 ship's time</span></span>
+          <span class="no"><span>Chapter III</span><span>19:15 ship's time</span></span>
           <span class="t">The Grand Staircase</span>
           <span class="p">Varnished oak, wrought iron and a glowing glass dome. Climb to the clock.</span>
           <span class="go">Enter →</span>
         </button>
+        <button class="ticket" type="button" data-go="dining">
+          <span class="no"><span>Chapter IV</span><span>19:40 ship's time</span></span>
+          <span class="t">A Toast in First Class</span>
+          <span class="p">Dine beneath the white plaster arches of the Dining Saloon, and raise a glass.</span>
+          <span class="go">Take your seat →</span>
+        </button>
         <button class="ticket" type="button" data-go="ice">
-          <span class="no"><span>Chapter III</span><span>23:39 ship's time</span></span>
+          <span class="no"><span>Chapter V</span><span>23:39 ship's time</span></span>
           <span class="t">Iceberg, Right Ahead</span>
           <span class="p">Stand on the bow on a moonless night as the lookout rings the bell.</span>
           <span class="go">Go forward →</span>
-        </button>
-        <button class="ticket" type="button" data-go="dock">
-          <span class="no"><span>Chapter IV</span><span>10 Apr 1912</span></span>
-          <span class="t">Departure Day</span>
-          <span class="p">Cargo swings aboard at Southampton as passengers wave from the boat deck.</span>
-          <span class="go">Go to the quay →</span>
         </button>
       </div>
       <div class="vrrow">
@@ -452,64 +459,105 @@ function makeHull(){ return surface(1024, 1024, (c, hh, g, w, h) => {
 }, 3); }
 
 function makeOak(){ return surface(512, 512, (c, hh, g, w, h) => {
-  const gr = c.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#6f4524'); gr.addColorStop(1, '#5c3519'); c.fillStyle = gr; c.fillRect(0, 0, w, h);
+  const gr = c.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#b88246'); gr.addColorStop(1, '#a26d36'); c.fillStyle = gr; c.fillRect(0, 0, w, h);
   g.fillStyle = grey(70); g.fillRect(0, 0, w, h);
   for (let i = 0; i < 220; i++){
-    c.strokeStyle = Math.random() < .5 ? `rgba(30,14,4,${rnd(.06,.16)})` : `rgba(150,100,55,${rnd(.05,.14)})`; c.lineWidth = rnd(.5, 2);
+    c.strokeStyle = Math.random() < .5 ? `rgba(90,50,18,${rnd(.08,.2)})` : `rgba(220,170,110,${rnd(.06,.16)})`; c.lineWidth = rnd(.5, 2);
     let x = rnd(0, w); c.beginPath(); c.moveTo(x, 0); for (let y = 0; y <= h; y += 12){ x += rnd(-1.4, 1.4) + Math.sin(y * .02 + i) * .4; c.lineTo(x, y); } c.stroke();
   }
-  for (let i = 0; i < 6; i++){ c.strokeStyle = 'rgba(40,20,8,.18)'; c.lineWidth = 1.2; const cx = rnd(60, w - 60), cy = rnd(60, h - 60); for (let r = 4; r < 40; r += 5){ c.beginPath(); c.ellipse(cx, cy, r * .4, r, 0, 0, 7); c.stroke(); } }
+  for (let i = 0; i < 10; i++){ c.strokeStyle = 'rgba(110,64,24,.2)'; c.lineWidth = 1.2; const cx = rnd(60, w - 60), cy = rnd(60, h - 60); for (let r = 4; r < 40; r += 5){ c.beginPath(); c.ellipse(cx, cy, r * .4, r, 0, 0, 7); c.stroke(); } }
   const m = 34;
   hh.fillStyle = '#8a8a8a'; hh.fillRect(0, 0, w, h);
   hh.fillStyle = '#5a5a5a'; hh.fillRect(m - 6, m - 6, w - 2 * m + 12, h - 2 * m + 12);
   for (let k = 0; k < 24; k++){ hh.fillStyle = grey(70 + k * 6); hh.fillRect(m + k, m + k, w - 2 * (m + k), h - 2 * (m + k)); }
   hh.strokeStyle = '#c8c8c8'; hh.lineWidth = 3; hh.strokeRect(m - 14, m - 14, w - 2 * m + 28, h - 2 * m + 28);
-  c.strokeStyle = 'rgba(30,15,5,.4)'; c.lineWidth = 3; c.strokeRect(m - 6, m - 6, w - 2 * m + 12, h - 2 * m + 12);
+  c.strokeStyle = 'rgba(80,44,14,.45)'; c.lineWidth = 3; c.strokeRect(m - 6, m - 6, w - 2 * m + 12, h - 2 * m + 12);
   c.fillStyle = 'rgba(255,220,170,.05)'; c.fillRect(m + 24, m + 24, w - 2 * (m + 24), h - 2 * (m + 24));
-  c.fillStyle = 'rgba(20,10,3,.5)'; c.fillRect(0, 0, w, 3); c.fillRect(0, 0, 3, h); hh.fillStyle = '#404040'; hh.fillRect(0, 0, w, 3); hh.fillRect(0, 0, 3, h);
+  c.fillStyle = 'rgba(70,38,12,.5)'; c.fillRect(0, 0, w, 3); c.fillRect(0, 0, 3, h); hh.fillStyle = '#404040'; hh.fillRect(0, 0, w, 3); hh.fillRect(0, 0, 3, h);
   blobs(g, w, h, 12, () => [120, 120, 120, .3], 40, 120);
 }, 3); }
 
 function makeTiles(){ return surface(512, 512, (c, hh, g, w, h) => {
   const s = 64;
   for (let y = 0; y < h; y += s) for (let x = 0; x < w; x += s){
-    c.fillStyle = `hsl(42,${rnd(30,40)}%,${rnd(80,86)}%)`; c.fillRect(x, y, s, s); g.fillStyle = grey(rnd(40, 70)); g.fillRect(x, y, s, s);
+    c.fillStyle = `hsl(40,${rnd(22,30)}%,${rnd(84,89)}%)`; c.fillRect(x, y, s, s); g.fillStyle = grey(rnd(40, 70)); g.fillRect(x, y, s, s);
     hh.fillStyle = grey(rnd(150, 170)); hh.fillRect(x, y, s, s);
-    c.save(); c.translate(x, y); c.rotate(Math.PI / 4); c.fillStyle = ((x + y) / s) % 2 ? '#8b3424' : '#1d1a18'; c.fillRect(-13, -13, 26, 26); c.restore();
+    c.save(); c.translate(x, y); c.rotate(Math.PI / 4); c.fillStyle = '#1d1a18'; c.fillRect(-8, -8, 16, 16); c.restore();
   }
-  c.strokeStyle = '#a89c82'; hh.strokeStyle = '#404040'; g.strokeStyle = '#e0e0e0';
+  c.strokeStyle = '#c4b89c'; hh.strokeStyle = '#404040'; g.strokeStyle = '#e0e0e0';
   for (const ctx of [c, hh, g]){ ctx.lineWidth = 3; for (let i = 0; i <= w; i += s){ ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke(); } }
   blobs(c, w, h, 20, () => [120, 100, 70, rnd(.03, .07)], 30, 120);
 }, 2); }
 
-function makeClock(){ return surface(1024, 768, (c, hh, g, w, h) => {
-  const gr = c.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#6c4322'); gr.addColorStop(1, '#58331a'); c.fillStyle = gr; c.fillRect(0, 0, w, h);
-  for (let i = 0; i < 260; i++){ c.strokeStyle = `rgba(30,14,4,${rnd(.05,.14)})`; c.lineWidth = rnd(.5, 2); let x = rnd(0, w); c.beginPath(); c.moveTo(x, 0); for (let y = 0; y <= h; y += 14){ x += rnd(-1.4, 1.4); c.lineTo(x, y); } c.stroke(); }
-  g.fillStyle = grey(70); g.fillRect(0, 0, w, h);
-  hh.fillStyle = '#707070'; hh.fillRect(0, 0, w, h);
-  for (let k = 0; k < 20; k++){ hh.strokeStyle = grey(100 + k * 5); hh.lineWidth = 2; hh.strokeRect(20 + k, 20 + k, w - 40 - 2 * k, h - 40 - 2 * k); }
-  const cx = w / 2, cy = h * .52;
-  // two robed figures in low relief
-  for (const side of [-1, 1]){
-    const fx = cx + side * 250;
-    const path = ctx => { ctx.beginPath(); ctx.moveTo(fx - 50 * side, h - 80); ctx.bezierCurveTo(fx - 70 * side, h - 300, fx - 20 * side, cy - 120, fx, cy - 170); ctx.arc(fx, cy - 200, 30, Math.PI / 2, Math.PI * 2.5); ctx.bezierCurveTo(fx + 40 * side, cy - 120, fx + 120 * side, cy - 80, fx + 150 * side, cy - 40); ctx.bezierCurveTo(fx + 60 * side, cy, fx + 70 * side, h - 250, fx + 60 * side, h - 80); ctx.closePath(); };
-    path(c); c.fillStyle = 'rgba(140,95,50,.5)'; c.fill(); path(hh); hh.fillStyle = '#c4c4c4'; hh.fill();
-    hh.strokeStyle = '#8a8a8a'; hh.lineWidth = 3; for (let k = 0; k < 7; k++){ hh.beginPath(); hh.moveTo(fx + rnd(-40, 40), cy - 60); hh.quadraticCurveTo(fx + rnd(-30, 30), cy + 100, fx + rnd(-40, 40) * side, h - 90); hh.stroke(); }
+function makeClock(){ return surface(1024, 1700, (c, hh, g, w, h) => {
+  const OAK = '#b07a40', GILT = [176, 120, 58];
+  c.fillStyle = OAK; c.fillRect(0, 0, w, h); g.fillStyle = grey(85); g.fillRect(0, 0, w, h); hh.fillStyle = grey(90); hh.fillRect(0, 0, w, h);
+  for (let i = 0; i < 200; i++){ c.strokeStyle = `rgba(90,50,18,${rnd(.06,.16)})`; c.lineWidth = rnd(.5, 2); let x = rnd(0, w); c.beginPath(); c.moveTo(x, 0); for (let y = 0; y <= h; y += 16){ x += rnd(-1.4, 1.4); c.lineTo(x, y); } c.stroke(); }
+  // draw a shape into colour and height together; lit from the upper left
+  const both = (path, col, ht, glow = .25) => { path(c); c.fillStyle = col; c.fill(); path(hh); hh.fillStyle = grey(ht); hh.fill(); };
+  const gilt = (k = 0) => `rgb(${GILT[0] + k | 0},${GILT[1] + k * .8 | 0},${GILT[2] + k * .5 | 0})`;
+  const blob = (x, y, rx, ry, ht = 220, k = 0, rot = 0) => { both(ctx => { ctx.beginPath(); ctx.ellipse(x, y, rx, ry, rot, 0, 7); }, gilt(k), ht);
+    const gr = c.createRadialGradient(x - rx * .35, y - ry * .35, 1, x, y, Math.max(rx, ry)); gr.addColorStop(0, 'rgba(255,225,160,.45)'); gr.addColorStop(.6, 'rgba(255,225,160,0)'); gr.addColorStop(1, 'rgba(50,25,5,.35)'); c.fillStyle = gr; c.beginPath(); c.ellipse(x, y, rx, ry, rot, 0, 7); c.fill(); };
+  const rectR = (x, y, ww, hh2, ht, col) => both(ctx => { ctx.beginPath(); ctx.rect(x, y, ww, hh2); }, col, ht);
+  const fruitString = (x0, y0, x1, y1, n, r) => { for (let i = 0; i <= n; i++){ const t = i / n, x = x0 + (x1 - x0) * t + Math.sin(t * 9) * 6, y = y0 + (y1 - y0) * t; blob(x, y, r * rnd(.75, 1.15), r * rnd(.8, 1.2), rnd(200, 245), rnd(-20, 25)); if (i % 2) blob(x + rnd(-r, r), y + r * .6, r * .55, r * .5, 235, 15); } };
+  const bandEgg = (y, x0, x1, r) => { rectR(x0, y - r * 1.3, x1 - x0, r * 2.6, 150, '#a06c36'); for (let x = x0 + r; x < x1; x += r * 2.3) blob(x, y, r * .8, r * 1.05, 215, 10); };
+
+  // outer frame and pilasters with hanging fruit
+  rectR(30, 30, w - 60, h - 60, 140, '#a87238');
+  rectR(70, 470, 110, 1000, 170, '#ad773e'); rectR(w - 180, 470, 110, 1000, 170, '#ad773e');
+  fruitString(125, 520, 125, 1420, 22, 26); fruitString(w - 125, 520, w - 125, 1420, 22, 26);
+  // arch with garlands, shell and rosettes
+  const ax = w / 2, ay = 470, ar = 420;
+  both(ctx => { ctx.beginPath(); ctx.arc(ax, ay, ar, Math.PI, 0); ctx.arc(ax, ay, ar - 46, 0, Math.PI, true); ctx.closePath(); }, '#b58046', 200);
+  both(ctx => { ctx.beginPath(); ctx.arc(ax, ay, ar - 46, Math.PI, 0); ctx.closePath(); }, '#a26c34', 120);
+  for (let a = Math.PI + .12; a < Math.PI * 2 - .1; a += .085) blob(ax + Math.cos(a) * (ar - 23), ay + Math.sin(a) * (ar - 23), 13, 9, 225, 10, a + Math.PI / 2);
+  for (const sd of [-1, 1]){ for (let i = 0; i <= 14; i++){ const t = i / 14, x = ax + sd * (40 + t * 300), y = 300 + Math.sin(t * Math.PI) * 70 - t * 30; blob(x, y, 22 * rnd(.8, 1.1), 18, 230, rnd(-10, 25)); }
+    blob(ax + sd * 150, 360, 26, 26, 240, 20); blob(ax + sd * 290, 395, 24, 24, 240, 20);
+    for (let i = 0; i < 6; i++) blob(ax + sd * 360, 120 + i * 30, 18, 14, 225, 5);
+    for (let i = 0; i < 4; i++) blob(130 + (sd > 0 ? w - 260 : 0), 160 + i * 34, 30, 16, 225, 10, sd * .4); }
+  for (let i = 0; i < 9; i++){ const a = Math.PI + (i + .5) / 9 * Math.PI; both(ctx => { ctx.beginPath(); ctx.moveTo(ax, 330); ctx.lineTo(ax + Math.cos(a) * 80, 330 + Math.sin(a) * 80); ctx.lineTo(ax + Math.cos(a + .2) * 80, 330 + Math.sin(a + .2) * 80); ctx.closePath(); }, gilt(i % 2 ? 20 : -10), 235); }
+  blob(ax, 335, 28, 22, 245, 25);
+  // cornice bands
+  bandEgg(500, 60, w - 60, 13); bandEgg(560, 60, w - 60, 11);
+  // central recessed panel
+  const px = 230, py = 600, pw = w - 460, ph = 820;
+  rectR(px - 22, py - 22, pw + 44, ph + 44, 200, '#b58046');
+  rectR(px, py, pw, ph, 60, '#8e5c2a');
+  const cx = w / 2;
+  // pedestal, urn and clock
+  rectR(cx - 55, py + ph - 330, 110, 330, 170, gilt(-10));
+  both(ctx => { ctx.beginPath(); ctx.moveTo(cx - 95, py + 430); ctx.quadraticCurveTo(cx, py + 520, cx + 95, py + 430); ctx.lineTo(cx + 70, py + 480); ctx.quadraticCurveTo(cx, py + 510, cx - 70, py + 480); ctx.closePath(); }, gilt(5), 210);
+  blob(cx, py + 610, 30, 40, 220, 15); blob(cx, py + 700, 22, 22, 225, 20);
+  blob(cx, py + 330, 125, 125, 230, 10);
+  c.fillStyle = '#efe8d4'; c.beginPath(); c.arc(cx, py + 330, 98, 0, 7); c.fill(); hh.fillStyle = grey(150); hh.beginPath(); hh.arc(cx, py + 330, 98, 0, 7); hh.fill(); g.fillStyle = grey(30); g.beginPath(); g.arc(cx, py + 330, 98, 0, 7); g.fill();
+  c.fillStyle = '#b0883c'; c.beginPath(); c.arc(cx, py + 330, 26, 0, 7); c.fill();
+  c.fillStyle = '#1b1b1b'; c.font = '600 22px Georgia, serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+  ['XII', 'I', 'II', 'III', 'IIII', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'].forEach((t, i) => { const a = i / 12 * Math.PI * 2; c.fillText(t, cx + Math.sin(a) * 76, py + 330 - Math.cos(a) * 76); });
+  const hand = (a, len, wd) => { c.save(); c.translate(cx, py + 330); c.rotate(a); c.fillRect(-wd / 2, -len, wd, len + 10); c.restore(); };
+  hand((7 + 15 / 60) / 12 * Math.PI * 2, 46, 6); hand(15 / 60 * Math.PI * 2, 68, 4);
+  // two robed, winged figures: Honour (left, foot on the globe) and Glory (right)
+  for (const sd of [-1, 1]){
+    const fx = cx + sd * 175, top = py + 120, base = py + ph - 30;
+    both(ctx => { ctx.beginPath(); ctx.moveTo(fx + sd * 10, top + 40); ctx.bezierCurveTo(fx + sd * 140, top - 30, fx + sd * 150, top + 260, fx + sd * 100, top + 420); ctx.bezierCurveTo(fx + sd * 70, top + 300, fx + sd * 40, top + 160, fx + sd * 10, top + 40); ctx.closePath(); }, gilt(-25), 150);
+    for (let k = 0; k < 7; k++){ hh.strokeStyle = grey(175); hh.lineWidth = 6; hh.beginPath(); hh.moveTo(fx + sd * (20 + k * 12), top + 60 + k * 8); hh.quadraticCurveTo(fx + sd * (90 + k * 8), top + 150, fx + sd * (60 + k * 6), top + 300 + k * 14); hh.stroke(); }
+    both(ctx => { ctx.beginPath(); ctx.moveTo(fx - 55, base); ctx.bezierCurveTo(fx - 75, base - 300, fx - 60, top + 170, fx - 40, top + 110); ctx.quadraticCurveTo(fx, top + 85, fx + 40, top + 110); ctx.bezierCurveTo(fx + 60, top + 170, fx + 75, base - 300, fx + 60, base); ctx.closePath(); }, gilt(0), 230);
+    for (let k = 0; k < 9; k++){ const x0 = fx + rnd(-40, 40); hh.strokeStyle = grey(rnd(150, 200)); hh.lineWidth = rnd(4, 9); hh.beginPath(); hh.moveTo(x0, top + 160 + rnd(0, 60)); hh.bezierCurveTo(x0 + rnd(-30, 30), top + 330, x0 + rnd(-25, 25), base - 200, fx + rnd(-50, 50), base - 5); hh.stroke();
+      c.strokeStyle = 'rgba(60,32,10,.35)'; c.lineWidth = 2; c.beginPath(); c.moveTo(x0, top + 170); c.bezierCurveTo(x0 + rnd(-30, 30), top + 330, x0, base - 200, fx + rnd(-50, 50), base - 5); c.stroke(); }
+    blob(fx, top + 60, 34, 42, 250, 30);
+    blob(fx - sd * 6, top + 28, 38, 22, 240, 0);
+    both(ctx => { ctx.beginPath(); ctx.moveTo(fx - sd * 25, top + 140); ctx.quadraticCurveTo(fx - sd * 70, top + 70, cx - sd * 40, top + 40); ctx.lineWidth = 1; ctx.lineTo(cx - sd * 30, top + 60); ctx.quadraticCurveTo(fx - sd * 55, top + 100, fx - sd * 10, top + 160); ctx.closePath(); }, gilt(10), 235);
   }
-  for (const side of [-1, 1]) for (let i = 0; i < 12; i++){
-    const a = Math.PI / 2 + side * (0.45 + i * 0.2), r = 175;
-    for (const ctx of [c, hh]){ ctx.save(); ctx.translate(cx + Math.cos(a) * r, cy + Math.sin(a) * r); ctx.rotate(a + side * .6); ctx.fillStyle = ctx === c ? `rgba(${150 + i * 5},${105 + i * 3},55,.85)` : '#d0d0d0'; ctx.beginPath(); ctx.ellipse(0, 0, 30, 11, 0, 0, 7); ctx.fill(); ctx.restore(); }
-  }
-  c.fillStyle = '#a88238'; c.beginPath(); c.arc(cx, cy, 140, 0, 7); c.fill(); g.fillStyle = grey(60); g.beginPath(); g.arc(cx, cy, 140, 0, 7); g.fill();
-  hh.fillStyle = '#e0e0e0'; hh.beginPath(); hh.arc(cx, cy, 140, 0, 7); hh.fill();
-  c.fillStyle = '#efe7d2'; c.beginPath(); c.arc(cx, cy, 122, 0, 7); c.fill(); hh.fillStyle = '#a0a0a0'; hh.beginPath(); hh.arc(cx, cy, 122, 0, 7); hh.fill(); g.fillStyle = grey(40); g.beginPath(); g.arc(cx, cy, 122, 0, 7); g.fill();
-  c.fillStyle = '#1b1b1b'; c.font = '600 26px Georgia, serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
-  const rom = ['XII', 'I', 'II', 'III', 'IIII', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
-  rom.forEach((s, i) => { const a = i / 12 * Math.PI * 2; c.fillText(s, cx + Math.sin(a) * 96, cy - Math.cos(a) * 96); });
-  const hand = (a, len, wd) => { c.save(); c.translate(cx, cy); c.rotate(a); c.fillRect(-wd / 2, -len, wd, len + 14); c.restore(); };
-  hand((7 + 15 / 60) / 12 * Math.PI * 2, 58, 8); hand(15 / 60 * Math.PI * 2, 86, 5);
-  c.beginPath(); c.arc(cx, cy, 8, 0, 7); c.fill();
-}, 3); }
+  // palm frond held between them
+  for (let i = 0; i < 16; i++){ const t = i / 15, x = cx - 120 + t * 240, y = py + 150 - Math.sin(t * Math.PI) * 70; blob(x, y, 20, 7, 235, 15, -.6 + t * 1.2); }
+  blob(cx - 245, py + ph - 70, 60, 60, 245, 15);
+  for (let i = 0; i < 18; i++){ const a = i / 18 * Math.PI * 2; blob(cx + 210 + Math.cos(a) * 62, py + ph - 95 + Math.sin(a) * 70, 15, 9, 230, 10, a); }
+  // lower cornice and console with shell and griffins
+  bandEgg(py + ph + 50, 60, w - 60, 12);
+  rectR(60, py + ph + 80, w - 120, 50, 190, '#b58046');
+  for (const sd of [-1, 1]){ const gx = cx + sd * 300; both(ctx => { ctx.beginPath(); ctx.ellipse(gx, h - 120, 110, 60, sd * .2, 0, 7); }, gilt(-5), 215); blob(gx + sd * 70, h - 160, 30, 26, 235, 20); for (let k = 0; k < 5; k++) blob(gx - sd * (20 + k * 18), h - 170 - k * 6, 14, 22, 230, 10, sd * .5); }
+  for (let i = 0; i < 9; i++){ const a = Math.PI * (1 + (i + .5) / 9); both(ctx => { ctx.beginPath(); ctx.moveTo(cx, h - 70); ctx.lineTo(cx + Math.cos(a) * 110, h - 70 + Math.sin(a) * 110); ctx.lineTo(cx + Math.cos(a + .25) * 110, h - 70 + Math.sin(a + .25) * 110); ctx.closePath(); }, gilt(i % 2 ? 20 : -5), 230); }
+  fruitString(140, h - 70, cx - 140, h - 70, 12, 20); fruitString(cx + 140, h - 70, w - 140, h - 70, 12, 20);
+}, 6); }
 
 function makeGlass(){ const C = canvas(1024, 256), g = C.getContext('2d'), w = 1024, h = 256;
   const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#fff8e8'); gr.addColorStop(1, '#d8dcd2'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
@@ -521,14 +569,22 @@ function makeGlass(){ const C = canvas(1024, 256), g = C.getContext('2d'), w = 1
   g.lineWidth = 2; for (let i = 0; i < 48; i++) for (const y of [96, 156, 216]){ const x = (i + .25) * w / 48; g.beginPath(); g.arc(x, y, 6, 0, 7); g.stroke(); }
   return ctex(C, true); }
 
-function makeIron(){ const C = canvas(256, 512), g = C.getContext('2d'), w = 256, h = 512;
-  g.strokeStyle = '#fff'; g.lineWidth = 10; g.lineCap = 'round';
-  g.strokeRect(10, 10, w - 20, h - 20);
-  const scroll = (cx, cy, s, f) => { g.beginPath(); g.moveTo(cx, cy - 80 * s); g.bezierCurveTo(cx + 68 * s * f, cy - 80 * s, cx + 68 * s * f, cy + 20 * s, cx, cy + 20 * s); g.bezierCurveTo(cx - 28 * s * f, cy + 20 * s, cx - 28 * s * f, cy - 20 * s, cx + 4 * f, cy - 24 * s); g.stroke(); };
-  for (const y of [160, 380]) for (const f of [1, -1]) scroll(w / 2, y, 1, f);
-  g.beginPath(); g.moveTo(w / 2, 10); g.lineTo(w / 2, h - 10); g.stroke();
-  g.fillStyle = '#fff'; for (const y of [80, 256, 300, 472]){ g.beginPath(); g.arc(w / 2, y, 14, 0, 7); g.fill(); }
-  return ctex(C, false); }
+function makeIron(){ const w = 256, h = 512, C = canvas(w, h), M = canvas(w, h), g = C.getContext('2d'), m = M.getContext('2d');
+  m.fillStyle = '#1c1814'; m.fillRect(0, 0, w, h);
+  for (const ctx of [g, m]){ ctx.strokeStyle = ctx === g ? '#fff' : '#1c1814'; ctx.lineWidth = 10; ctx.lineCap = 'round'; ctx.strokeRect(10, 10, w - 20, h - 20);
+    const scroll = (cx, cy, sc, f) => { ctx.beginPath(); ctx.moveTo(cx, cy - 70 * sc); ctx.bezierCurveTo(cx + 68 * sc * f, cy - 70 * sc, cx + 68 * sc * f, cy + 20 * sc, cx, cy + 20 * sc); ctx.bezierCurveTo(cx - 28 * sc * f, cy + 20 * sc, cx - 28 * sc * f, cy - 20 * sc, cx + 4 * f, cy - 24 * sc); ctx.stroke(); };
+    for (const y of [110, 430]) for (const f of [1, -1]) scroll(w / 2, y, .9, f);
+    ctx.beginPath(); ctx.moveTo(w / 2, 10); ctx.lineTo(w / 2, 160); ctx.moveTo(w / 2, 360); ctx.lineTo(w / 2, h - 10); ctx.stroke();
+    ctx.lineWidth = 14; ctx.beginPath(); ctx.ellipse(w / 2, 260, 72, 96, 0, 0, 7); ctx.stroke();
+    ctx.fillStyle = ctx.strokeStyle; ctx.beginPath(); ctx.ellipse(w / 2, 260, 52, 74, 0, 0, 7); ctx.fill(); }
+  // gilt medallion
+  const gr = m.createRadialGradient(w / 2 - 15, 240, 5, w / 2, 260, 96); gr.addColorStop(0, '#f2d690'); gr.addColorStop(.6, '#c9a050'); gr.addColorStop(1, '#7a5a24');
+  m.strokeStyle = gr; m.lineWidth = 14; m.beginPath(); m.ellipse(w / 2, 260, 72, 96, 0, 0, 7); m.stroke();
+  m.fillStyle = gr; m.beginPath(); m.ellipse(w / 2, 260, 52, 74, 0, 0, 7); m.fill();
+  m.fillStyle = '#6a4a1c'; for (let i = 0; i < 8; i++){ const a = i / 8 * Math.PI * 2; m.beginPath(); m.ellipse(w / 2 + Math.cos(a) * 22, 260 + Math.sin(a) * 32, 9, 14, a, 0, 7); m.fill(); }
+  m.fillStyle = '#f0d488'; m.beginPath(); m.arc(w / 2, 260, 14, 0, 7); m.fill();
+  m.fillStyle = '#c9a050'; for (const y of [60, 470]){ m.beginPath(); m.arc(w / 2, y, 12, 0, 7); m.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(w / 2, y, 12, 0, 7); g.fill(); }
+  return { alpha: ctex(C, false), map: ctex(M, true) }; }
 
 function makeWaterNormals(size){
   const h = new Float32Array(size * size), waves = [];
@@ -804,6 +860,7 @@ function buildPerson(o, parent){
         set('spine', -.06, 0, 0); hips.position.x = hip0.x;
       }
       if (pose === 'wave' || pose === 'waveL'){ const s = pose === 'wave' ? -1 : 1, w = Math.sin(st.t * 7 + st.ph * 3); set('sh' + s, -2.55, 0, s * (.3 + .3 * w)); set('el' + s, -.4 - .2 * w); }
+      if (st.toast){ set('sh-1', -1.75, 0, -.3); set('el-1', -.75); }
     }
     st.next -= dt; if (st.next < 0){ st.next = rnd(2, 6); st.look = [rnd(-.1, .12), rnd(-.6, .6)]; }
     const ly = st.look[1] * (v > 0.05 ? .3 : 1);
@@ -812,6 +869,7 @@ function buildPerson(o, parent){
     const k = Math.min(1, dt * 6);
     for (const key in BJ){ const tr = T[key] || [0, 0, 0], r = BJ[key].rotation; r.x += (tr[0] - r.x) * k; r.y += (tr[1] - r.y) * k; r.z += (tr[2] - r.z) * k; }
   };
+  root.userData.handR = B('handR');
   if (parent){ parent.add(root); root.userData.scene = parent; }
   ALLP.push(root);
   return root;
@@ -1042,7 +1100,7 @@ function buildStairs(ch){
   S.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   const oakSet = makeOak();
   const oak = (w, h) => phys(Object.assign(rep(oakSet, w / 2.4, h / 2.4), { roughness: 1, clearcoat: .55, clearcoatRoughness: .22, envMapIntensity: .35 }));
-  const tread = phys(Object.assign(rep(oakSet, 1, .2), { color: 0xb08a6a, clearcoat: .7, clearcoatRoughness: .2, envMapIntensity: .3 }));
+  const tread = phys(Object.assign(rep(oakSet, 1, .2), { color: 0xe6c8a0, clearcoat: .7, clearcoatRoughness: .2, envMapIntensity: .3 }));
   const brass = std({ color: 0xc9a050, metalness: 1, roughness: .28 });
 
   const floor = phys(Object.assign(rep(makeTiles(), 16 / 1.2, 9 / 1.2), { clearcoat: .4, clearcoatRoughness: .15, envMapIntensity: .3 }));
@@ -1053,6 +1111,11 @@ function buildStairs(ch){
     mir.material.fragmentShader = mir.material.fragmentShader.replace('gl_FragColor = vec4( blendOverlay( base.rgb, color ), 1.0 );', 'gl_FragColor = vec4( base.rgb * 0.22, 1.0 );');
     mir.rotation.x = -Math.PI / 2; mir.position.set(0, 0.004, 3.5); mir.userData.noAO = true; S.add(mir);
   }
+  { const bc = canvas(512, 64), bg = bc.getContext('2d'); bg.fillStyle = '#ece4d0'; bg.fillRect(0, 0, 512, 64); bg.fillStyle = '#1a1714';
+    bg.fillRect(0, 0, 512, 6); bg.fillRect(0, 58, 512, 6); for (let x = 0; x < 512; x += 64){ bg.beginPath(); bg.moveTo(x + 6, 52); bg.lineTo(x + 32, 12); bg.lineTo(x + 58, 52); bg.closePath(); bg.fill(); }
+    const bt = ctex(bc, true);
+    const strip = (len, x, z, ry) => { const t = bt.clone(); t.needsUpdate = true; t.repeat.set(len / 2.2, 1); const m = plane(len, .42, phys({ map: t, clearcoat: .4, clearcoatRoughness: .15 }), x, 0.003, z, ry, -Math.PI / 2, S); m.userData.noAO = true; };
+    strip(15.2, 0, 7.5, 0); strip(8.2, -7.5, 3.6, Math.PI / 2); strip(8.2, 7.5, 3.6, -Math.PI / 2); strip(3.4, -5.6, -0.5, Math.PI); strip(3.4, 5.6, -0.5, Math.PI); }
   // back wall with an opening for the double doors to the reception room
   plane(6.7, 9, oak(6.7, 9), -4.65, 4.5, 8, Math.PI, 0, S); plane(6.7, 9, oak(6.7, 9), 4.65, 4.5, 8, Math.PI, 0, S);
   plane(2.6, 5.7, oak(2.6, 5.7), 0, 6.15, 8, Math.PI, 0, S);
@@ -1120,43 +1183,19 @@ function buildStairs(ch){
     for (const sd of [-1, 1]){ const d = box(1.1, 2.3, .06, oak(.5, 1.1), sd * 7.95, 5.8, 3.5, S); d.rotation.y = Math.PI / 2; box(.2, 2.5, .16, oakD, sd * 7.95, 5.85, 2.9, S).rotation.y = Math.PI / 2; box(.2, 2.5, .16, oakD, sd * 7.95, 5.85, 4.1, S).rotation.y = Math.PI / 2; }
     for (const x of [-4.5, 4.5]){ box(1.1, 2.3, .06, oak(.5, 1.1), x, 5.8, 7.95, S); }
   }
-  plane(5, 9, oak(5, 9), -5.5, 4.5, -1, 0, 0, S);
-  plane(5, 9, oak(5, 9), 5.5, 4.5, -1, 0, 0, S);
-  // stair alcove walls, each with an archway off the landing into a corridor
   for (const sd of [-1, 1]){
-    const ry = -sd * Math.PI / 2;
-    plane(5.6, 9, oak(5.6, 9), sd * 3, 4.5, -3.8, ry, 0, S);
-    plane(0.2, 9, oak(.2, 9), sd * 3, 4.5, -8.9, ry, 0, S);
-    plane(2.2, 3.3, oak(2.2, 3.3), sd * 3, 7.35, -7.7, ry, 0, S);
-    plane(2.2, 3, oak(2.2, 3), sd * 3, 1.5, -7.7, ry, 0, S);
+    const ds = (w, h) => { const m = oak(w, h); m.side = THREE.DoubleSide; return m; };
+    plane(3.8, 9, ds(3.8, 9), sd * 4.9, 4.5, -1, 0, 0, S);
+    plane(1.2, 4.65, ds(1.2, 4.65), sd * 7.4, 2.325, -1, 0, 0, S);
+    plane(1.2, 2.2, ds(1.2, 2.2), sd * 7.4, 7.9, -1, 0, 0, S);
   }
-  { const oakA = oak(.6, 2.4), wallC = std({ color: 0xb8ae98, roughness: .8 }), carpetC = std({ color: 0x6a1c1a, roughness: .95 }), ceilC = std({ color: 0xd8d0bc, roughness: .9 });
-    for (const sd of [-1, 1]){
-      const G = new THREE.Group(); S.add(G);
-      const x0 = sd * 3, x1 = sd * 13, xc = sd * 8;
-      plane(10, 2.2, carpetC, xc, 3.005, -7.7, 0, -Math.PI / 2, G);
-      plane(10, 2.2, ceilC, xc, 5.7, -7.7, 0, Math.PI / 2, G);
-      plane(10, 2.7, wallC, xc, 4.35, -8.8, 0, 0, G); plane(10, 2.7, wallC, xc, 4.35, -6.6, Math.PI, 0, G);
-      for (const k of [0, 1, 2]){ const dx = sd * (4.8 + k * 2.6); for (const zz of [-8.78, -6.62]){ box(.9, 2.05, .05, oak(.4, .9), dx, 4.03, zz, G); sph(.035, brass, dx + .32, 4.0, zz + (zz < -7.7 ? .05 : -.05), G); } }
-      // end of the corridor: a door out to the promenade, with a glazed light beyond
-      plane(2.2, 2.7, wallC, x1, 4.35, -7.7, -sd * Math.PI / 2, 0, G);
-      const dr = box(1.1, 2.2, .06, oak(.5, 1.1), x1 - sd * .03, 4.1, -7.7, G); dr.rotation.y = Math.PI / 2;
-      const gl2 = box(.7, .9, .07, std({ color: 0x0a0e14, emissive: 0x9ab4d0, emissiveIntensity: .5, roughness: .2 }), x1 - sd * .04, 4.6, -7.7, G); gl2.rotation.y = Math.PI / 2;
-      for (const k of [0, 1, 2]) sph(.12, std({ color: 0xfff2d8, emissive: 0xffd9a0, emissiveIntensity: 2 }), sd * (4.6 + k * 3.2), 5.6, -7.7, G);
-      const cl3 = new THREE.PointLight(0xffd9a0, 2.2, 11, 2); cl3.position.set(xc, 5.4, -7.7); G.add(cl3);
-      // carved archway frame on the landing side
-      for (const zz of [-8.82, -6.58]) box(.3, 2.9, .14, oakA, x0 + sd * .04, 4.45, zz, S).rotation.y = Math.PI / 2;
-      box(.16, .3, 2.6, oakA, x0 - sd * .02, 5.85, -7.7, S);
-    }
-    // a small brass plaque pointing the way
-    const pc = canvas(512, 96), pg = pc.getContext('2d'); pg.fillStyle = '#b08a40'; pg.fillRect(0, 0, 512, 96); pg.fillStyle = '#2a1e10'; pg.font = 'bold 40px Georgia, serif'; pg.textAlign = 'center'; pg.textBaseline = 'middle'; pg.fillText('←  STATEROOMS  →', 256, 50);
-    plane(1.4, .26, std({ map: ctex(pc, true), color: 0x8a7a60, metalness: .3, roughness: .5 }), 0, 6.95, -8.95, 0, 0, S);
-  }
+  // stair alcove walls, open beside the landing where the upper flights rise
+  for (const sd of [-1, 1]){ const w = oak(5.6, 9); w.side = THREE.DoubleSide; plane(5.6, 9, w, sd * 3, 4.5, -3.8, -sd * Math.PI / 2, 0, S); }
   plane(6, 9, oak(6, 9), 0, 4.5, -9, 0, 0, S);
   // skirting and cornice
   const trim = oak(1, 1);
   for (const [w, x, z, ry] of [[16, 0, 7.95, 0], [9, -7.95, 3.5, Math.PI / 2], [9, 7.95, 3.5, Math.PI / 2]]){ const b = box(w, .25, .06, trim, x, .125, z, S); b.rotation.y = ry; const c2 = box(w, .3, .12, trim, x, 8.85, z, S); c2.rotation.y = ry; }
-  const plaster = std({ color: 0xece2cc, roughness: .9, side: THREE.DoubleSide });
+  const plaster = std({ color: 0xf6f2e8, roughness: .9, side: THREE.DoubleSide });
   plane(6, 8, plaster, 0, 9, -5, 0, Math.PI / 2, S);
   const cs = new THREE.Shape(); cs.moveTo(-8, -1); cs.lineTo(8, -1); cs.lineTo(8, 8); cs.lineTo(-8, 8); cs.lineTo(-8, -1);
   const hole = new THREE.Path(); hole.absarc(0, 3.5, 4, 0, Math.PI * 2, true); cs.holes.push(hole);
@@ -1167,6 +1206,11 @@ function buildStairs(ch){
     new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffffff, emissiveMap: makeGlass(), emissiveIntensity: 2.2, side: THREE.BackSide, fog: false }));
   dome.position.set(0, 9, 3.5); dome.scale.y = 0.75; S.add(dome);
   const drum = new THREE.Mesh(new THREE.CylinderGeometry(4.05, 4.05, 0.45, 64, 1, true), std({ color: 0xc9a050, metalness: 1, roughness: .3, side: THREE.DoubleSide })); drum.position.set(0, 9.05, 3.5); S.add(drum);
+  { const den = new THREE.InstancedMesh(new THREE.BoxGeometry(.09, .12, .12), plaster, 140), d = new THREE.Object3D();
+    for (let i = 0; i < 140; i++){ const a = i / 140 * Math.PI * 2; d.position.set(Math.cos(a) * 4.12, 8.86, 3.5 + Math.sin(a) * 4.12); d.rotation.y = -a; d.updateMatrix(); den.setMatrixAt(i, d.matrix); } S.add(den);
+    const mold = new THREE.Mesh(new THREE.TorusGeometry(4.2, .08, 8, 96), plaster); mold.rotation.x = Math.PI / 2; mold.position.set(0, 8.95, 3.5); S.add(mold);
+    const mold2 = new THREE.Mesh(new THREE.TorusGeometry(4.25, .05, 8, 96), plaster); mold2.rotation.x = Math.PI / 2; mold2.position.set(0, 8.75, 3.5); S.add(mold2);
+    for (const x of [-6, 6]) box(.35, .3, 9, plaster, x, 8.85, 3.5, S); for (const z of [-0.6, 7.6]) box(16, .3, .35, plaster, 0, 8.85, z, S); }
   const domeLight = new THREE.PointLight(0xfff2dc, 40, 0, 2); domeLight.position.set(0, 10.5, 3.5); S.add(domeLight);
 
   // steps and landing
@@ -1188,14 +1232,15 @@ function buildStairs(ch){
   box(6, 3, 2.6, tread, 0, 1.5, -7.7, S);
   // wrought-iron balustrades with gilt
   const ironT = makeIron();
-  const ironMat = std({ color: 0x1c1814, metalness: .6, roughness: .45, alphaMap: ironT, alphaTest: 0.5, side: THREE.DoubleSide });
+  const ironMat = std({ map: ironT.map, metalness: .65, roughness: .4, alphaMap: ironT.alpha, alphaTest: 0.5, side: THREE.DoubleSide });
   for (const sx of [-2.82, 2.82]){
     for (let i = 3; i < 12; i++){ const top = (i + 1) * 0.25, zc = -1 - 0.45 * i - 0.225; const p = plane(0.45, 0.85, ironMat, sx, top + 0.43, zc, Math.PI / 2, 0, S); p.castShadow = true; }
     for (const zc of [-1.22, -1.67, -2.12]){ const ry = 1.42 + (-0.97 - zc) * 3 / 5.4, hgt = ry - 0.8; const p = plane(0.45, hgt, ironMat, sx, 0.77 + hgt / 2, zc, Math.PI / 2, 0, S); p.castShadow = true; }
     const r = box(0.12, 0.09, 6.25, oak(.5, .5), sx, 2.93, -3.7, S); r.rotation.x = -Math.atan2(3, 5.4);
     const sg = Math.sign(sx), nx = sg * 3.6;
-    box(0.32, 1.25, 0.32, oak(.6, .6), nx, 0.25 + 0.625, -0.2, S);
-    box(0.4, 0.08, 0.4, oak(.6, .6), nx, 1.54, -0.2, S);
+    box(0.36, 0.3, 0.36, oak(.6, .6), nx, 0.4, -0.2, S);
+    const nw = lathe([[0, 0], [.16, 0], [.16, .06], [.12, .1], [.1, .5], [.12, .6], [.1, .7], [.16, .82], [.17, .9], [0, .9]], oak(.4, .4)); nw.position.set(nx, .55, -0.2); nw.castShadow = true; S.add(nw);
+    const urn = lathe([[0, 0], [.07, 0], [.05, .05], [.1, .12], [.11, .2], [.06, .26], [.03, .3], [.04, .36], [0, .42]], brass); urn.position.set(nx, 1.45, -0.2); S.add(urn);
     const curl = new THREE.CatmullRomCurve3([new THREE.Vector3(nx, 1.52, -0.2), new THREE.Vector3(sg * 3.48, 1.5, -0.6), new THREE.Vector3(sg * 3.15, 1.46, -0.9), new THREE.Vector3(sg * 2.82, 1.42, -1.0)]);
     mesh(new THREE.TubeGeometry(curl, 24, 0.055, 10), oak(.3, .3), 0, 0, 0, S);
     for (const t of [0.3, 0.62]){
@@ -1205,16 +1250,36 @@ function buildStairs(ch){
   }
   // cherub with torch lamp on the left newel
   const bronze = std({ color: 0x5a4024, metalness: .9, roughness: .4 });
-  const cherub = lathe([[0, 0], [.1, 0], [.12, .1], [.09, .25], [.1, .32], [.06, .4], [0, .44]], bronze); cherub.position.set(-3.6, 1.58, -0.2); S.add(cherub);
-  sph(.06, bronze, -3.6, 2.08, -0.2, S);
-  const torch = cyl(.015, .015, .45, bronze, -3.5, 2.21, -0.2, S, 6); torch.rotation.z = -0.3;
-  sph(0.1, std({ color: 0xfff0d0, emissive: 0xffd08a, emissiveIntensity: 5 }), -3.44, 2.46, -0.2, S);
-  const cl = new THREE.PointLight(0xffc27a, 3, 0, 2); cl.position.set(-3.44, 2.5, -0.15); S.add(cl);
+  { const PX = 0, PZ = 1.35, P = new THREE.Group(); P.position.set(PX, 0, PZ); S.add(P);
+    const po = oak(.5, 1);
+    box(.62, .18, .62, po, 0, .09, 0, P); box(.48, .9, .48, po, 0, .63, 0, P); box(.62, .14, .62, po, 0, 1.15, 0, P); box(.52, .06, .52, po, 0, 1.25, 0, P);
+    for (const [dx, dz] of [[0, .245], [0, -.245], [.245, 0], [-.245, 0]]){ const pn = box(dz ? .34 : .02, .62, dz ? .02 : .34, oak(.3, .6), dx, .63, dz, P); }
+    const C = new THREE.Group(); C.position.y = 1.28; P.add(C);
+    const lim = (r, len, x, y, z, rx, rz) => { const m = new THREE.Mesh(new THREE.CapsuleGeometry(r, len, 4, 10), bronze); m.position.set(x, y, z); m.rotation.set(rx, 0, rz); m.castShadow = true; C.add(m); return m; };
+    // a standing child figure: one leg forward, right arm raised with the lamp, wings at the shoulders
+    const V = (x, y, z) => new THREE.Vector3(x, y, z);
+    const seg = (a, b2, r) => { const d = b2.clone().sub(a), m = new THREE.Mesh(new THREE.CapsuleGeometry(r, d.length(), 4, 12), bronze); m.position.copy(a).add(b2).multiplyScalar(.5); m.quaternion.setFromUnitVectors(V(0, 1, 0), d.normalize()); m.castShadow = true; C.add(m); return m; };
+    const ball = (r, x, y, z, sx = 1, sy = 1, sz = 1) => { const m = new THREE.Mesh(new THREE.SphereGeometry(r, 18, 14), bronze); m.position.set(x, y, z); m.scale.set(sx, sy, sz); m.castShadow = true; C.add(m); return m; };
+    seg(V(-.045, .02, 0), V(-.05, .2, 0), .036); seg(V(-.05, .2, 0), V(-.045, .34, 0), .045);
+    seg(V(.05, .03, .06), V(.055, .19, .03), .034); seg(V(.055, .19, .03), V(.045, .34, 0), .044);
+    ball(.025, -.045, .015, .03, 1, .6, 1.6); ball(.024, .05, .025, .09, 1, .6, 1.6);
+    ball(.085, 0, .37, 0, 1.05, .75, .85);
+    ball(.088, 0, .48, 0, .95, 1.25, .8);
+    ball(.105, 0, .67, .01);
+    for (let k = 0; k < 12; k++){ const a = k / 12 * Math.PI * 1.6 - Math.PI * .3, e = .5 + (k % 3) * .25; ball(.026, Math.cos(a) * .085 * Math.cos(e), .69 + Math.sin(e) * .075, -Math.abs(Math.sin(a)) * .06 - .01); }
+    for (const sd of [-1, 1]){ for (let k = 0; k < 4; k++){ const f = ball(.15 - k * .018, sd * (.11 + k * .045), .6 - k * .05, -.12 - k * .025, .14, 1, .42); f.rotation.set(.35, sd * .5, sd * (.45 + k * .22)); } }
+    seg(V(.075, .55, 0), V(.12, .7, .01), .03); seg(V(.12, .7, .01), V(.14, .86, .02), .026); ball(.03, .145, .89, .02);
+    seg(V(-.075, .55, 0), V(-.11, .43, .04), .03); seg(V(-.11, .43, .04), V(-.08, .33, .09), .026);
+    const drape = ball(.07, -.04, .34, .06, 1.2, .6, .5); drape.rotation.z = .4;
+    cyl(.012, .02, .2, bronze, .145, 1.0, .02, C, 8); ball(.03, .145, 1.1, .02, 1.2, .5, 1.2);
+    const globe = new THREE.Mesh(new THREE.SphereGeometry(.075, 20, 14), std({ color: 0xfff4dc, emissive: 0xffd28a, emissiveIntensity: 4 })); globe.position.set(.145, 1.18, .02); C.add(globe);
+    const cl = new THREE.PointLight(0xffc27a, 3, 0, 2); cl.position.set(PX + .145, 1.28 + 1.24, PZ + .02); S.add(cl);
+  }
 
   // Honour and Glory Crowning Time
   const clockM = phys(Object.assign(makeClock(), { clearcoat: .5, clearcoatRoughness: .25, envMapIntensity: .35 }));
-  plane(3.4, 2.55, clockM, 0, 5.3, -8.97, 0, 0, S);
-  const frame = box(3.7, 2.85, 0.08, oak(1, 1), 0, 5.3, -9.0, S);
+  plane(3.0, 4.98, clockM, 0, 5.82, -8.935, 0, 0, S);
+  const frame = box(3.2, 5.2, 0.1, oak(1, 1.6), 0, 5.82, -9.0, S);
 
   // galleries above
   const ledge = oak(2, 2);
@@ -1225,6 +1290,34 @@ function buildStairs(ch){
     const r = box(0.12, 0.09, len, ledge, (x0 + x1) / 2, 5.55, (z0 + z1) / 2, S); r.rotation.y = ang;
   };
   addRow(-6.8, -1, -6.8, 6.8); addRow(6.8, -1, 6.8, 6.8); addRow(-6.8, 6.8, 6.8, 6.8);
+  // from the landing, a flight rises on each side to a half-landing, then a walkway leads forward to the galleries
+  { const RISE = 1.65 / 7, RUN = 0.32, Z0 = -8.9, Z1 = -7.2, TOP = 4.65;
+    const wallM = oak(8, 9); wallM.side = THREE.DoubleSide;
+    for (const sd of [-1, 1]){
+      for (let k = 0; k < 7; k++){
+        const top = 3 + (k + 1) * RISE, xa = 3 + k * RUN, xc = sd * (xa + RUN / 2);
+        box(RUN, top, Z1 - Z0, tread, xc, top / 2, (Z0 + Z1) / 2, S);
+        const nose = cyl(.028, .028, Z1 - Z0, brass, sd * (xa + .01), top - .02, (Z0 + Z1) / 2, S, 8); nose.rotation.x = Math.PI / 2;
+        const p = plane(RUN, .85, ironMat, xc, top + .43, Z1, 0, 0, S); p.castShadow = true;
+      }
+      const hr = box(7 * RUN + .1, .09, .12, oak(.5, .5), sd * (3 + 3.5 * RUN), 3 + 3.5 * RISE + .95, Z1, S); hr.rotation.z = sd * Math.atan2(1.65, 7 * RUN);
+      box(.3, 1.2, .3, oak(.5, .5), sd * 3.05, 3.6, Z1 + .05, S); const u1 = lathe([[0, 0], [.07, 0], [.05, .05], [.1, .12], [.11, .2], [.06, .26], [0, .32]], brass); u1.position.set(sd * 3.05, 4.2, Z1 + .05); S.add(u1);
+      for (const zc of [-6.62, -6.96]){ const p = plane(.34, .85, ironMat, sd * 3.0, 3.43, zc, Math.PI / 2, 0, S); p.castShadow = true; }
+      box(.1, .09, .9, oak(.5, .5), sd * 3.0, 3.9, -6.8, S);
+      // half-landing and walkway
+      box(8 - 5.24, TOP, 2.4, tread, sd * (5.24 + 8) / 2, TOP / 2, -7.7, S);
+      box(1.2, .3, 5.5, oak(1, 4), sd * 7.4, TOP - .15, -3.75, S);
+      box(1.2, .25, 5.5, oak(1, 2), sd * 7.4, TOP - .42, -3.75, S);
+      addRow(sd * 5.24, -6.5, sd * 6.8, -6.5); addRow(sd * 6.8, -6.5, sd * 6.8, -1.02);
+      // enclosing walls, floor and ceiling of the stair wells
+      plane(8, 9, wallM, sd * 8, 4.5, -5, -sd * Math.PI / 2, 0, S);
+      plane(5, 9, wallM, sd * 5.5, 4.5, -9, 0, 0, S);
+      plane(5, 8, std({ color: 0xf6f2e8, roughness: .9, side: THREE.DoubleSide }), sd * 5.5, 9, -5, 0, Math.PI / 2, S);
+      plane(5, 8, std({ color: 0x5a3a20, roughness: .9 }), sd * 5.5, .002, -5, 0, -Math.PI / 2, S);
+      const wl2 = new THREE.PointLight(0xffd9a0, 3, 10, 2); wl2.position.set(sd * 6, 8, -6.5); S.add(wl2);
+      sph(.12, std({ color: 0xfff2d8, emissive: 0xffd9a0, emissiveIntensity: 3 }), sd * 7.85, 6.6, -7.8, S);
+    }
+  }
 
   // chandelier
   cyl(0.025, 0.025, 2.0, brass, 0, 8.1, 3.5, S, 6);
@@ -1847,6 +1940,192 @@ function buildDock(ch){
   };
 }
 
+/* ---------- Chapter V: the first-class Dining Saloon ---------- */
+function makeStrapwork(){ return surface(512, 512, (c, hh, g, w, h) => {
+  c.fillStyle = '#efe9dc'; c.fillRect(0, 0, w, h); hh.fillStyle = grey(90); hh.fillRect(0, 0, w, h); g.fillStyle = grey(200); g.fillRect(0, 0, w, h);
+  const strap = (path, wd) => { for (const [ctx, col, lw] of [[hh, grey(210), wd], [hh, grey(240), wd * .45], [c, 'rgba(150,135,110,.35)', wd + 3], [c, '#f4efe4', wd - 3]]){ ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineJoin = 'round'; path(ctx); ctx.stroke(); } };
+  const cx = w / 2, cy = h / 2;
+  strap(ctx => { ctx.beginPath(); for (let i = 0; i <= 8; i++){ const a = i / 8 * Math.PI * 2 + Math.PI / 8; const r = i % 2 ? 150 : 190; ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r); } }, 16);
+  strap(ctx => { ctx.beginPath(); ctx.rect(cx - 70, cy - 70, 140, 140); }, 12);
+  strap(ctx => { ctx.beginPath(); ctx.moveTo(cx, cy - 70); ctx.lineTo(cx + 70, cy); ctx.lineTo(cx, cy + 70); ctx.lineTo(cx - 70, cy); ctx.closePath(); }, 10);
+  for (const [x, y] of [[0, 0], [w, 0], [0, h], [w, h]]) strap(ctx => { ctx.beginPath(); ctx.arc(x, y, 70, 0, 7); }, 14);
+  for (const [x0, y0, x1, y1] of [[cx, cy - 190, cx, 0], [cx, cy + 190, cx, h], [cx - 190, cy, 0, cy], [cx + 190, cy, w, cy]]) strap(ctx => { ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); }, 14);
+  for (const [x, y] of [[cx - 128, cy - 128], [cx + 128, cy - 128], [cx - 128, cy + 128], [cx + 128, cy + 128]]) strap(ctx => { ctx.beginPath(); ctx.arc(x, y, 18, 0, 7); }, 8);
+  hh.fillStyle = grey(240); for (const [x, y] of [[cx, cy], [0, 0], [w, 0], [0, h], [w, h]]){ hh.beginPath(); hh.arc(x, y, 22, 0, 7); hh.fill(); }
+}, 5); }
+function makeSaloonWall(){ return surface(512, 512, (c, hh, g, w, h) => {
+  c.fillStyle = '#ece6d8'; c.fillRect(0, 0, w, h); hh.fillStyle = grey(110); hh.fillRect(0, 0, w, h); g.fillStyle = grey(190); g.fillRect(0, 0, w, h);
+  for (const [x, y, ww, hh2] of [[40, 40, w - 80, 200], [40, 290, w - 80, 180]]){ for (let k = 0; k < 10; k++){ hh.strokeStyle = grey(140 + k * 9); hh.lineWidth = 2; hh.strokeRect(x + k, y + k, ww - 2 * k, hh2 - 2 * k); } c.strokeStyle = 'rgba(140,125,100,.35)'; c.lineWidth = 2; c.strokeRect(x, y, ww, hh2); }
+  hh.fillStyle = grey(150); hh.fillRect(0, h - 18, w, 18); c.fillStyle = '#d8d0c0'; c.fillRect(0, h - 18, w, 18);
+}, 3); }
+function makeCarpet(){ const C = canvas(512, 512), g = C.getContext('2d');
+  g.fillStyle = '#6a1c18'; g.fillRect(0, 0, 512, 512);
+  for (let i = 0; i < 1800; i++){ g.fillStyle = `rgba(${Math.random() < .5 ? '40,8,6' : '140,50,40'},${rnd(.08, .2)})`; g.fillRect(rnd(0, 512), rnd(0, 512), 2, 2); }
+  const motif = (x, y, s) => { g.save(); g.translate(x, y); g.scale(s, s);
+    g.fillStyle = '#2a4a3e'; g.beginPath(); g.moveTo(0, -60); g.lineTo(60, 0); g.lineTo(0, 60); g.lineTo(-60, 0); g.closePath(); g.fill();
+    g.fillStyle = '#c99a4a'; g.beginPath(); g.moveTo(0, -38); g.lineTo(38, 0); g.lineTo(0, 38); g.lineTo(-38, 0); g.closePath(); g.fill();
+    g.fillStyle = '#6a1c18'; g.beginPath(); g.arc(0, 0, 20, 0, 7); g.fill(); g.fillStyle = '#2a4a3e'; for (let i = 0; i < 8; i++){ const a = i / 8 * Math.PI * 2; g.beginPath(); g.ellipse(Math.cos(a) * 12, Math.sin(a) * 12, 7, 3, a, 0, 7); g.fill(); }
+    g.strokeStyle = '#1e3a30'; g.lineWidth = 4; for (const a of [0, Math.PI / 2, Math.PI, Math.PI * 1.5]){ g.beginPath(); g.moveTo(Math.cos(a) * 60, Math.sin(a) * 60); g.quadraticCurveTo(Math.cos(a + .4) * 110, Math.sin(a + .4) * 110, Math.cos(a + .78) * 128, Math.sin(a + .78) * 128); g.stroke(); }
+    g.restore(); };
+  motif(128, 128, 1); motif(384, 384, 1); motif(384, 128, .55); motif(128, 384, .55); motif(0, 0, .55); motif(512, 0, .55); motif(0, 512, .55); motif(512, 512, .55); motif(256, 256, .4); motif(0, 256, .4); motif(512, 256, .4); motif(256, 0, .4); motif(256, 512, .4);
+  return ctex(C, true); }
+function makeLeaded(){ const C = canvas(256, 384), E = canvas(256, 384), g = C.getContext('2d'), e = E.getContext('2d'), w = 256, h = 384;
+  g.fillStyle = '#ece6d8'; g.fillRect(0, 0, w, h); e.fillStyle = '#000'; e.fillRect(0, 0, w, h);
+  const arch = ctx => { ctx.beginPath(); ctx.moveTo(14, h - 6); ctx.lineTo(14, w / 2); ctx.arc(w / 2, w / 2, w / 2 - 14, Math.PI, 0); ctx.lineTo(w - 14, h - 6); ctx.closePath(); };
+  arch(g); const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#2a3450'); gr.addColorStop(1, '#141a2c'); g.fillStyle = gr; g.fill();
+  arch(e); const ge = e.createLinearGradient(0, 0, 0, h); ge.addColorStop(0, '#2c3a5c'); ge.addColorStop(1, '#10182a'); e.fillStyle = ge; e.fill();
+  g.save(); arch(g); g.clip(); e.save(); arch(e); e.clip();
+  for (const ctx of [g, e]){ ctx.strokeStyle = '#0a0a0c'; ctx.lineWidth = 3; for (let k = -12; k < 24; k++){ ctx.beginPath(); ctx.moveTo(k * 26, 0); ctx.lineTo(k * 26 + h * .6, h); ctx.stroke(); ctx.beginPath(); ctx.moveTo(k * 26 + h * .6, 0); ctx.lineTo(k * 26, h); ctx.stroke(); } ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h); ctx.moveTo(0, h * .62); ctx.lineTo(w, h * .62); ctx.stroke(); }
+  g.restore(); e.restore();
+  g.strokeStyle = '#c8bea8'; g.lineWidth = 10; arch(g); g.stroke();
+  return { map: ctex(C, true), emissiveMap: ctex(E, true) }; }
+
+function buildDining(ch){
+  const S = new THREE.Scene();
+  S.background = new THREE.Color(0x1a140e); S.fog = new THREE.Fog(0x1a140e, 26, 60);
+  S.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  const W = 11, L = 15, H = 3.3;
+  const plasterM = std({ color: 0xf2ede2, roughness: .75 });
+  // floor, ceiling, walls
+  const carpet = makeCarpet(); carpet.repeat.set(2 * W / 2.4, 2 * L / 2.4);
+  plane(2 * W, 2 * L, std({ map: carpet, roughness: .95 }), 0, 0, 0, 0, -Math.PI / 2, S);
+  plane(2 * W, 2 * L, std(Object.assign(rep(makeStrapwork(), 2 * W / 3.4, 2 * L / 3.4), { roughness: .8 })), 0, H, 0, 0, Math.PI / 2, S);
+  const wallSet = makeSaloonWall();
+  for (const sd of [-1, 1]) plane(2 * L, H, std(Object.assign(rep(wallSet, 2 * L / 2.5, 1), { roughness: .8 })), sd * W, H / 2, 0, -sd * Math.PI / 2, 0, S);
+  plane(2 * W, H, std(Object.assign(rep(wallSet, 2 * W / 2.5, 1), { roughness: .8 })), 0, H / 2, -L, 0, 0, S);
+  plane(2 * W, H, std(Object.assign(rep(wallSet, 2 * W / 2.5, 1), { roughness: .8 })), 0, H / 2, L, Math.PI, 0, S);
+  // leaded arched windows in each bay along both sides
+  const lead = makeLeaded();
+  for (const sd of [-1, 1]) for (const z of [-12.5, -7.5, -2.5, 2.5, 7.5, 12.5]){
+    plane(1.3, 1.95, std({ map: lead.map, emissiveMap: lead.emissiveMap, emissive: 0xffffff, emissiveIntensity: .8, roughness: .25, metalness: .1 }), sd * (W - .02), 1.75, z, -sd * Math.PI / 2, 0, S);
+    const tr = mesh(new THREE.TorusGeometry(.6, .05, 8, 24, Math.PI), plasterM, sd * (W - .05), 2.07, z, S); tr.rotation.y = Math.PI / 2;
+    for (const dz of [-.62, .62]) box(.08, 1.3, .1, plasterM, sd * (W - .05), 1.42, z + dz, S);
+    box(.16, .06, 1.45, plasterM, sd * (W - .08), .76, z, S);
+  }
+  // columns and arches
+  const colG = new THREE.LatheGeometry([[0, 0], [.3, 0], [.3, .08], [.24, .12], [.2, .2], [.18, .3], [.16, 2.4], [.2, 2.48], [.18, 2.52], [.26, 2.62], [.3, 2.72], [.3, 2.76], [0, 2.76]].map(p => new THREE.Vector2(p[0], p[1])), 28);
+  const colXs = [-8.5, -3.5, 3.5, 8.5], colZs = [-10, -5, 0, 5, 10];
+  const colPos = [];
+  for (const x of colXs) for (const z of colZs){ mesh(colG, plasterM, x, 0, z, S); colPos.push([x, z]); }
+  const archBeam = (span) => { const sh = new THREE.Shape(), a = span / 2, top = H - 2.76;
+    sh.moveTo(-a, 0); sh.lineTo(-a, top); sh.lineTo(a, top); sh.lineTo(a, 0);
+    sh.absellipse(0, 0, a - .02, .42, 0, Math.PI, false); sh.closePath();
+    const geo = new THREE.ExtrudeGeometry(sh, { depth: .4, bevelEnabled: true, bevelThickness: .03, bevelSize: .03, bevelSegments: 2, curveSegments: 24 }); geo.translate(0, 0, -.2); return geo; };
+  const beamZ = archBeam(5), beamX7 = archBeam(7), beamX5 = archBeam(5), beamX25 = archBeam(2.5);
+  for (const x of colXs) for (let i = 0; i < colZs.length - 1; i++){ const m = mesh(beamZ, plasterM, x, 2.76, (colZs[i] + colZs[i + 1]) / 2, S); m.rotation.y = Math.PI / 2; }
+  for (const x of colXs) for (const zc of [-12.5, 12.5]){ const m = mesh(beamZ, plasterM, x, 2.76, zc, S); m.rotation.y = Math.PI / 2; }
+  for (const z of colZs){ mesh(beamX7, plasterM, 0, 2.76, z, S); for (const sd of [-1, 1]){ mesh(beamX5, plasterM, sd * 6, 2.76, z, S); const m = mesh(beamX25, plasterM, sd * 9.75, 2.76, z, S); } }
+  // octagonal ceiling lights in brass rims
+  const brass = std({ color: 0xc9a050, metalness: 1, roughness: .3 }), glow = std({ color: 0xfff6e4, emissive: 0xffe2b0, emissiveIntensity: 3.2, roughness: .4 });
+  for (const x of [0, -6, 6, -9.75, 9.75]) for (const z of [-12.5, -7.5, -2.5, 2.5, 7.5, 12.5]){
+    const big = Math.abs(x) < 7; cyl(big ? .42 : .3, big ? .42 : .3, .1, brass, x, H - .05, z, S, 8); cyl(big ? .37 : .26, big ? .33 : .23, .08, glow, x, H - .13, z, S, 8);
+  }
+  for (const [x, z] of [[0, -10], [0, 0], [0, 10], [-6, -5], [6, 5], [-6, 7.5], [6, -7.5]]){ const pl = new THREE.PointLight(0xffe0b8, 9, 13, 2); pl.position.set(x, H - .4, z); S.add(pl); }
+  S.add(new THREE.HemisphereLight(0xfff0dc, 0xe6d6bc, 1.0));
+  // the entrance doors behind you, and a sideboard at the far end
+  { const oakD = std({ color: 0x5a3a1e, roughness: .5 }), gl = std({ color: 0x1a120a, emissive: 0xffc27a, emissiveIntensity: 1.4, roughness: .2 });
+    for (const sd of [-1, 1]){ box(1.05, 2.4, .08, oakD, sd * .55, 1.2, L - .05, S); box(.6, 1.1, .09, gl, sd * .55, 1.55, L - .06, S); sph(.04, brass, sd * .12, 1.15, L - .12, S); }
+    box(2.5, .25, .14, plasterM, 0, 2.55, L - .06, S);
+    box(3.6, .9, .6, oakD, 0, .45, -L + .32, S); box(3.7, .05, .65, std({ color: 0xd8d0c0, roughness: .3 }), 0, .92, -L + .32, S);
+  }
+  for (const x of [-1.2, -.4, .4, 1.2]){ const v = lathe([[0, 0], [.08, 0], [.06, .05], [.1, .18], [.04, .3], [0, .32]], std({ color: 0xd8dcdc, metalness: 1, roughness: .2 })); v.position.set(x, .95, -L + .3); S.add(v); }
+
+  // tables, chairs and place settings
+  const cloth = std({ color: 0xf4f1ea, roughness: .9 });
+  const seats = [], tables = [];
+  for (const z of [-10, -5, 0, 5, 10]){
+    cyl(.8, .86, .76, cloth, 0, .38, z, S, 40); tables.push([0, z, 1.55]);
+    for (let k = 0; k < 6; k++){ const a = k / 6 * Math.PI * 2 + Math.PI / 6; seats.push({ x: Math.sin(a) * 1.15, z: z + Math.cos(a) * 1.15, tx: 0, tz: z, d: .58 }); }
+    for (const sd of [-1, 1]){
+      box(1.15, .76, 1.95, cloth, sd * 6, .38, z, S); tables.push([sd * 6, z, 1.5]);
+      for (const sx of [-1, 1]) for (const dz of [-.45, .45]) seats.push({ x: sd * 6 + sx * .88, z: z + dz, tx: sd * 6, tz: z + dz, d: .34 });
+      box(.8, .76, .8, cloth, sd * 9.85, .38, z, S); tables.push([sd * 9.85, z, 1.1]);
+      for (const dz of [-.72, .72]) seats.push({ x: sd * 9.85, z: z + dz, tx: sd * 9.85, tz: z, d: .5 });
+    }
+  }
+  for (const s of seats){ s.rot = Math.atan2(s.tx - s.x, s.tz - s.z); const len = Math.hypot(s.tx - s.x, s.tz - s.z); s.fx = (s.tx - s.x) / len; s.fz = (s.tz - s.z) / len; s.px = s.x + s.fx * (len - s.d); s.pz = s.z + s.fz * (len - s.d); }
+  const merge = parts => mergeGeometries(parts.map(([w, h, d, x, y, z]) => { const g2 = new THREE.BoxGeometry(w, h, d); g2.translate(x, y, z); return g2.toNonIndexed(); }));
+  const chairWood = merge([[.05, .46, .05, -.22, .23, .2], [.05, .46, .05, .22, .23, .2], [.05, .46, .05, -.22, .23, -.2], [.05, .46, .05, .22, .23, -.2], [.5, .06, .48, 0, .44, 0],
+    [.05, .62, .05, -.22, .76, -.22], [.05, .62, .05, .22, .76, -.22], [.5, .08, .05, 0, 1.07, -.23], [.06, .04, .44, -.27, .66, -.01], [.06, .04, .44, .27, .66, -.01], [.04, .2, .04, -.27, .55, .18], [.04, .2, .04, .27, .55, .18]]);
+  const chairLeather = merge([[.46, .08, .46, 0, .51, .01], [.4, .44, .05, 0, .78, -.2]]);
+  const instanced = (geo, mat, list, f) => { const m = new THREE.InstancedMesh(geo, mat, list.length), o = new THREE.Object3D(); list.forEach((s, i) => { f(o, s); o.updateMatrix(); m.setMatrixAt(i, o.matrix); }); m.castShadow = true; m.receiveShadow = true; S.add(m); return m; };
+  const placeChair = (o, s) => { o.position.set(s.x, 0, s.z); o.rotation.set(0, s.rot, 0); o.scale.set(1, 1, 1); };
+  instanced(chairWood, std({ color: 0x3a2414, roughness: .45 }), seats, placeChair);
+  instanced(chairLeather, phys({ color: 0x2c4a34, roughness: .5, clearcoat: .35, clearcoatRoughness: .4 }), seats, placeChair);
+  const china = phys({ color: 0xffffff, roughness: .2, clearcoat: 1 }), silver = std({ color: 0xd8dcdc, metalness: 1, roughness: .22 });
+  const glassM = phys({ color: 0xffffff, roughness: .04, metalness: 0, transparent: true, opacity: .28, clearcoat: 1, envMapIntensity: 1.6, depthWrite: false });
+  const fizzM = std({ color: 0xf2d27a, emissive: 0x6a4a10, emissiveIntensity: .4, transparent: true, opacity: .75, roughness: .1 });
+  const L2 = pts => new THREE.LatheGeometry(pts.map(p => new THREE.Vector2(p[0], p[1])), 16);
+  const fluteG = L2([[0, 0], [.032, 0], [.032, .004], [.004, .012], [.004, .1], [.018, .12], [.022, .19], [.024, .25], [.023, .25]]);
+  const fizzG = L2([[0, .12], [.016, .125], [.02, .19], [.021, .225], [0, .225]]);
+  const wineG = L2([[0, 0], [.035, 0], [.035, .004], [.004, .012], [.004, .08], [.03, .1], [.04, .14], [.034, .19], [.033, .19]]);
+  const plateG = new THREE.CylinderGeometry(.13, .1, .016, 28);
+  const at = (o, x, y, z, ry = 0) => { o.position.set(x, y, z); o.rotation.set(0, ry, 0); o.scale.set(1, 1, 1); };
+  const rx = s => -s.fz, rz = s => s.fx;
+  instanced(plateG, china, seats, (o, s) => at(o, s.px, .768, s.pz));
+  instanced(fluteG, glassM, seats, (o, s) => at(o, s.px + s.fx * .14 + rx(s) * .15, .76, s.pz + s.fz * .14 + rz(s) * .15));
+  instanced(fizzG, fizzM, seats, (o, s) => at(o, s.px + s.fx * .14 + rx(s) * .15, .76, s.pz + s.fz * .14 + rz(s) * .15));
+  instanced(wineG, glassM, seats, (o, s) => at(o, s.px + s.fx * .17 + rx(s) * .03, .76, s.pz + s.fz * .17 + rz(s) * .03));
+  const knifeG = new THREE.BoxGeometry(.016, .006, .2);
+  instanced(knifeG, silver, seats, (o, s) => at(o, s.px + rx(s) * .17, .772, s.pz + rz(s) * .17, s.rot));
+  instanced(knifeG, silver, seats, (o, s) => at(o, s.px - rx(s) * .17, .772, s.pz - rz(s) * .17, s.rot));
+  // table flowers
+  const petal = [std({ color: 0xf2c8d0, roughness: .8 }), std({ color: 0xfaf6ee, roughness: .8 }), std({ color: 0xd8506a, roughness: .8 })], leaf = std({ color: 0x3a5a30, roughness: .8 });
+  for (const [x, z] of tables.map(t => [t[0], t[1]])){ cyl(.05, .07, .18, silver, x, .85, z, S, 14); for (let k = 0; k < 7; k++){ const a = k / 7 * Math.PI * 2; sph(.045, k % 3 ? petal[k % 3] : leaf, x + Math.cos(a) * .06, 1.0 + rnd(0, .06), z + Math.sin(a) * .06, S); } sph(.05, petal[2], x, 1.06, z, S); }
+
+  // diners: full figures at the nearest tables, lighter figures elsewhere
+  const near = seats.filter(s => s.z > 2.5);
+  const diners = [], flutes = [];
+  const gowns = [0xe6dfea, 0x6e2032, 0x1f3a4a, 0xd8ccb4, 0x2a2a3a, 0xf0e4e8, 0x4a2a4a, 0x9a8aa0];
+  near.forEach((s, i) => {
+    if (i % 3 === 2) return;
+    const f = (i + (s.x > 0 ? 1 : 0)) % 2 === 0;
+    const p = person(f, f ? pick(gowns) : 0x0f0f13, S, { outfit: 'evening', pose: 'sit' });
+    p.position.set(s.x - s.fx * .02, -0.39, s.z - s.fz * .02); p.rotation.y = s.rot;
+    const fl = new THREE.Group(); fl.add(new THREE.Mesh(fluteG, glassM), new THREE.Mesh(fizzG, fizzM)); fl.visible = false; S.add(fl);
+    diners.push({ p, fl });
+  });
+  { const far = seats.filter(s => s.z <= 2.5 && Math.random() < .55);
+    const torsoG = L2([[0, 0], [.17, 0], [.19, .15], [.18, .35], [.21, .5], [.13, .6], [.06, .64], [0, .64]]); torsoG.scale(1, 1, .72);
+    const headG = new THREE.SphereGeometry(.1, 16, 12), hairG = new THREE.SphereGeometry(.106, 16, 10, 0, Math.PI * 2, 0, 1.7);
+    const ink = std({ roughness: .85 }), skinI = std({ roughness: .55 }), hairI = std({ roughness: .6 });
+    const tM = new THREE.InstancedMesh(torsoG, ink, far.length), hM = new THREE.InstancedMesh(headG, skinI, far.length), hrM = new THREE.InstancedMesh(hairG, hairI, far.length), o = new THREE.Object3D(), c = new THREE.Color();
+    far.forEach((s, i) => { const fem = Math.random() < .5, bx = s.x - s.fx * .06, bz = s.z - s.fz * .06;
+      o.position.set(bx, .5, bz); o.rotation.set(0, s.rot, 0); o.updateMatrix(); tM.setMatrixAt(i, o.matrix); tM.setColorAt(i, c.setHex(fem ? pick(gowns) : 0x111114));
+      o.position.set(bx, 1.24, bz); o.updateMatrix(); hM.setMatrixAt(i, o.matrix); hM.setColorAt(i, c.setHex(pick([0xe0b29a, 0xe8c0a8, 0xd4a284, 0xc8957a])));
+      o.position.set(bx - s.fx * .01, 1.25, bz - s.fz * .01); o.rotation.set(-.4, s.rot, 0); o.updateMatrix(); hrM.setMatrixAt(i, o.matrix); hrM.setColorAt(i, c.setHex(pick([0x2a1c12, 0x4a3020, 0x16100b, 0x6e4c2c]))); });
+    for (const m of [tM, hM, hrM]){ m.castShadow = true; m.instanceMatrix.needsUpdate = true; m.instanceColor.needsUpdate = true; S.add(m); } }
+  // stewards walking the aisles
+  const loop = [[2.45, -12.6], [2.45, 12.6], [-2.45, 12.6], [-2.45, -12.6]].map(([x, z]) => new THREE.Vector3(x, 0, z));
+  const segs = loop.map((a, i) => a.distanceTo(loop[(i + 1) % loop.length])), total = segs.reduce((a, b) => a + b, 0);
+  const stewards = [0, total / 2].map(off => { const p = person(false, 0xf0ede4, S, { outfit: 'evening' }); p.userData.driven = true; return { p, s: off }; });
+
+  // the player's own glass, raised for a toast
+  const myFlute = new THREE.Group(); myFlute.add(new THREE.Mesh(fluteG, glassM), new THREE.Mesh(fizzG, fizzM)); myFlute.scale.setScalar(1.15); myFlute.visible = false; cam.add(myFlute);
+  ch.toastT = -1; ch.nextToast = 14; ch.clinkT = 2;
+  ch.toast = () => { ch.toastT = 0; ch.nextToast = ch.ct + 50; for (const d of diners) d.p.userData.st.toast = true; setCaption('Cheers! Glasses are raised across the saloon.'); capTimer = 0; for (let i = 0; i < 7; i++) setTimeout(() => clink(.05 + Math.random() * .05), 900 + i * 140 + Math.random() * 300); };
+  ch.ct = 0;
+  const v = new THREE.Vector3();
+  ch.scene = S; ch.exposure = 0.85; ch.bloom = 0.35;
+  ch.colliders = tables.concat(colPos.map(([x, z]) => [x, z, .45]));
+  ch.update = (dt, t) => {
+    ch.ct += dt;
+    if (ch.toastT < 0 && ch.ct > ch.nextToast) ch.toast();
+    if (ch.toastT >= 0){
+      ch.toastT += dt; const k = ch.toastT;
+      const lift = Math.min(1, k / .8) * (k > 3.4 ? Math.max(0, 1 - (k - 3.4) / .8) : 1);
+      myFlute.visible = lift > .01; myFlute.position.set(.2 - .08 * lift, -.42 + .3 * lift, -.55); myFlute.rotation.set(0, 0, -.1 * lift + (k > 1.2 && k < 2.4 ? Math.sin((k - 1.2) * 5) * .05 : 0));
+      if (k > 4.2){ ch.toastT = -1; for (const d of diners) d.p.userData.st.toast = false; }
+    } else myFlute.visible = false;
+    for (const d of diners){ const on = d.p.userData.st.toast && ch.toastT > .6; d.fl.visible = on; if (on){ d.p.userData.handR.getWorldPosition(v); d.fl.position.set(v.x, v.y - .04, v.z); } }
+    for (const st of stewards){
+      st.s = (st.s + dt * 1.0) % total; let k = 0, acc = st.s; while (acc > segs[k]){ acc -= segs[k]; k++; }
+      const a = loop[k], b = loop[(k + 1) % loop.length]; st.p.position.lerpVectors(a, b, acc / segs[k]); st.p.rotation.y = Math.atan2(b.x - a.x, b.z - a.z); st.p.userData.tick(dt, 1.0);
+    }
+    ch.clinkT -= dt; if (ch.clinkT < 0){ ch.clinkT = rnd(1.2, 4); clink(.015 + Math.random() * .02); }
+  };
+}
+
 function buildIce(ch){
   const S = new THREE.Scene();
   S.fog = new THREE.FogExp2(0x070c14, 0.0016);
@@ -2126,7 +2405,7 @@ function buildIce(ch){
 /* ---------- chapters ---------- */
 const CH = {
   deck: {
-    eyebrow: 'Chapter I · Boat Deck', stamp: 'Sun 14 Apr 1912 · 18:40 · Day 5 out of Southampton',
+    eyebrow: 'Chapter II · Boat Deck', stamp: 'Sun 14 Apr 1912 · 18:40 · Day 5 out of Southampton',
     start: { x: 1, y: 0, z: 10, yaw: -0.55, pitch: 0.03 }, speed: 2.4, eye: 1.65, build: buildDeck, lamp: false,
     lines: [
       'Sunday 14 April 1912, early evening. RMS Titanic is four days out of Southampton, bound for New York.',
@@ -2138,31 +2417,38 @@ const CH = {
     constrain(o, n){ n.z = clamp(n.z, -56, 56); n.x = clamp(n.x, -3.6, Math.abs(n.z) < 18 ? 4.15 : 2.0); n.y = 0; }
   },
   stairs: {
-    eyebrow: 'Chapter II · Grand Staircase', stamp: 'Sun 14 Apr 1912 · 19:15 · First Class, forward',
+    eyebrow: 'Chapter III · Grand Staircase', stamp: 'Sun 14 Apr 1912 · 19:15 · First Class, forward',
     start: { x: 0, y: 0, z: 6.6, yaw: 0, pitch: 0.12 }, speed: 2.0, eye: 1.65, build: buildStairs, lamp: false,
     lines: [
-      'The forward Grand Staircase. Oak panelling, wrought-iron balustrades and a glass dome bringing light down from the boat deck.',
+      'The forward Grand Staircase. Polished English oak, wrought-iron balustrades with gilded medallions, and a glass dome bringing light down from the boat deck.',
+      'At the foot of the stairs a bronze cherub holds up an electric torch. A cherub like it, from the ship\u2019s aft staircase, was recovered from the wreck\u2019s debris field in 1987.',
       'Look up. The dome was wrought iron and glass, with a chandelier hanging at its centre.',
       'Corridors either side lead to first-class staterooms. Behind you, the doors open onto the reception room, where passengers met before dinner.',
-      'Walk up the stairs. The carved panel on the landing is called Honour and Glory Crowning Time. Archways either side of it lead along to the staterooms.',
+      'Walk up the stairs. The carved panel on the landing is called Honour and Glory Crowning Time. From here two flights rise either side to the galleries above.',
       'First-class passengers gathered here in evening dress before going down to the dining saloon on D deck.',
       'Tonight’s first-class dinner ran to ten courses. The collision is four and a half hours away.'
     ],
     constrain(o, n){
-      n.z = clamp(n.z, -8.6, 7.5);
-      if (n.z < -1){
-        const inCor2 = n.z < -6.8 && n.z > -8.6 && o.y > 2.85;
-        if (o.z >= -1 && Math.abs(n.x) > 2.55) n.z = -1;
-        else if (Math.abs(o.x) > 2.6){ n.z = clamp(n.z, -8.6, -6.8); n.x = clamp(n.x, -12.6, 12.6); }
-        else n.x = clamp(n.x, inCor2 ? -12.6 : -2.55, inCor2 ? 12.6 : 2.55);
-      }
-      else { const inCor = n.z > 2.6 && n.z < 4.4; n.x = clamp(n.x, inCor ? -15.4 : -7.4, inCor ? 15.4 : 7.4); if (Math.abs(o.x) > 7.5) n.z = clamp(n.z, 2.6, 4.4); }
-      const ramp = n.z > -1 ? 0 : n.z > -6.4 ? (-1 - n.z) / 5.4 * 3 : 3;
-      n.y = Math.max(ramp, fanH(n.x, n.z));
+      const levels = (x, z) => {
+        const L = [], ax = Math.abs(x);
+        if (z > -1 && z < 7.5 && ax < 7.4) L.push(fanH(x, z));
+        if (z > 2.6 && z < 4.4 && ax >= 7.4 && ax < 15.4) L.push(0);
+        if (z <= -1 && z > -8.6 && ax <= 2.75){ const ramp = z > -6.4 ? (-1 - z) / 5.4 * 3 : 3; L.push(Math.max(ramp, fanH(x, z))); }
+        if (z > -8.6 && z < -7.4 && ax > 2.75 && ax < 5.24) L.push(3 + Math.min(7, Math.floor((ax - 3) / 0.32) + 1) * 1.65 / 7);
+        if (z > -8.6 && z < -6.7 && ax >= 5.24 && ax < 7.85) L.push(4.65);
+        if (z > -8.6 && z < 7.85 && ax >= 6.95 && ax < 7.85) L.push(4.65);
+        if (z > 6.95 && z < 7.85 && ax < 7.85) L.push(4.65);
+        return L;
+      };
+      const pick = (x, z) => { let best = null; for (const h of levels(x, z)) if (Math.abs(h - o.y) <= .45 && (best === null || Math.abs(h - o.y) < Math.abs(best - o.y))) best = h; return best; };
+      let h = pick(n.x, n.z);
+      if (h === null){ h = pick(n.x, o.z); if (h !== null) n.z = o.z; else { h = pick(o.x, n.z); if (h !== null) n.x = o.x; else { n.x = o.x; n.z = o.z; h = o.y; } } }
+      if (h < .5){ const dx = n.x, dz = n.z - 1.35, d = Math.hypot(dx, dz); if (d < .62){ const k = .62 / Math.max(d, 1e-3); n.x = dx * k; n.z = 1.35 + dz * k; } }
+      n.y = h;
     }
   },
   ice: {
-    eyebrow: 'Chapter III \u00b7 Iceberg, Right Ahead', stamp: 'Sun 14 Apr 1912 \u00b7 23:39 ship\u2019s time \u00b7 22 knots',
+    eyebrow: 'Chapter V \u00b7 Iceberg, Right Ahead', stamp: 'Sun 14 Apr 1912 \u00b7 23:39 ship\u2019s time \u00b7 22 knots',
     start: { x: 0, y: 0, z: -6, yaw: 0, pitch: 0.03 }, speed: 2.2, eye: 1.65, build: buildIce,
     lines: [],
     constrain(o, n){
@@ -2173,7 +2459,7 @@ const CH = {
     }
   },
   dock: {
-    eyebrow: 'Chapter IV \u00b7 Southampton', stamp: 'Wed 10 Apr 1912 \u00b7 11:40 \u00b7 Berth 44, Ocean Dock',
+    eyebrow: 'Chapter I \u00b7 Southampton', stamp: 'Wed 10 Apr 1912 \u00b7 11:40 \u00b7 Berth 44, Ocean Dock',
     start: { x: -16, y: 0, z: -30, yaw: -1.134, pitch: 0.33 }, speed: 2.4, eye: 1.65, build: buildDock,
     lines: [
       'Wednesday 10 April 1912, late morning. Titanic lies at Berth 44 in Southampton\u2019s new Ocean Dock, due to sail at noon.',
@@ -2188,7 +2474,23 @@ const CH = {
     constrain(o, n){ n.x = clamp(n.x, -27, 4.8); n.z = clamp(n.z, -128, 128); n.y = 0; if (n.z > 4.2 && n.z < 113.5 && n.x > -13.8 && n.x < -10.2){ n.x = o.x; if (o.x > -13.8 && o.x < -10.2) n.z = o.z; } }
   }
 };
-const ORDER = ['deck', 'stairs', 'ice', 'dock'];
+const ORDER = ['dock', 'deck', 'stairs', 'dining', 'ice'];
+CH.dining = {
+  eyebrow: 'Chapter IV \u00b7 Dining Saloon', stamp: 'Sun 14 Apr 1912 \u00b7 19:40 \u00b7 First Class, D deck',
+  start: { x: 0, y: 0, z: 13.6, yaw: 0, pitch: 0.02 }, speed: 2.0, eye: 1.65, build: buildDining,
+  lines: [
+    'Sunday 14 April 1912, 7:40 pm. The first-class Dining Saloon on D deck, often called the largest room afloat. It could seat more than 550 diners at once.',
+    'Its white Jacobean-style plasterwork and leaded windows were inspired by English country houses such as Haddon Hall and Hatfield House.',
+    'Tonight\u2019s menu runs to ten courses, from oysters and consomm\u00e9 Olga to filet mignon, roast squab and Waldorf pudding.',
+    'Diners sit in green leather chairs of carved oak while stewards move between the tables.',
+    'Say \u201ccheers\u201d or tap Toast to raise a glass with the diners.',
+    'Captain Smith is not here tonight. He is dining as a guest of the Widener family in the \u00e0 la carte restaurant on B deck.'
+  ],
+  constrain(o, n){
+    n.x = clamp(n.x, -10.5, 10.5); n.z = clamp(n.z, -14.5, 14.5); n.y = 0;
+    for (let it = 0; it < 2; it++) for (const [x, z, r] of this.colliders || []){ const dx = n.x - x, dz = n.z - z, d = Math.hypot(dx, dz); if (d < r){ const k = r / Math.max(d, 1e-3); n.x = x + dx * k; n.z = z + dz * k; } }
+  }
+};
 const player = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0 };
 let cur = null, curId = null, capIdx = 0, capTimer = 0;
 
@@ -2200,7 +2502,7 @@ function go(id){
   renderPass.scene = c.scene; gtao.scene = c.scene; gtao.enabled = !LOW && c.ao !== false;
   Object.assign(player, c.start);
   R.toneMappingExposure = c.exposure; bloom.strength = c.bloom;
-  autoWalk = false; c.nest = false; $('#bView').textContent = 'Crow\u2019s nest'; $('#bView').hidden = id !== 'ice'; $('#bReplay').hidden = true;
+  autoWalk = false; c.nest = false; $('#bView').textContent = 'Crow\u2019s nest'; $('#bView').hidden = id !== 'ice'; $('#bToast').hidden = id !== 'dining'; $('#bReplay').hidden = true;
   if (c.reset) c.reset();
   $('#hEyebrow').textContent = c.eyebrow; $('#hStamp').textContent = c.stamp;
   capIdx = 0; capTimer = 0; if (!c.script) setCaption(c.lines[0]); else { capHead = c.eyebrow; drawCap(); }
@@ -2267,7 +2569,7 @@ function initAudio(){
 }
 function setAmbience(id){
   if (!AC) return; const t = AC.currentTime;
-  const p = { deck: [750, .35, .05], stairs: [220, .05, .08], ice: [950, .06, .06], dock: [700, .22, .012] }[id];
+  const p = { deck: [750, .35, .05], stairs: [220, .05, .08], ice: [950, .06, .06], dock: [700, .22, .012], dining: [420, .05, .015] }[id];
   filt.frequency.setTargetAtTime(p[0], t, .5); lfoG.gain.setTargetAtTime(p[1], t, .5); humG.gain.setTargetAtTime(p[2], t, .5);
 }
 let bufs = {};
@@ -2287,6 +2589,16 @@ function noiseBurst(kind, type, freq, q, vol, dur, attack){
   if (type === 'bandpass' && freq < 300){ const lfo = AC.createOscillator(), lg = AC.createGain(); lfo.frequency.value = 7; lg.gain.value = vol * .6; lfo.connect(lg); lg.connect(g.gain); lfo.start(t); lfo.stop(t + dur); }
   s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + dur + .1);
 }
+function clink(vol = .05){
+  if (!AC || !soundOn) return;
+  const t = AC.currentTime;
+  for (const [f, a, d] of [[2600 + Math.random() * 900, vol, .45], [5300 + Math.random() * 1200, vol * .5, .25], [7800 + Math.random() * 900, vol * .25, .12]]){
+    const o = AC.createOscillator(), g = AC.createGain(); o.frequency.value = f;
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(a, t + .003); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + d + .05);
+  }
+}
+function doToast(){ if (curId !== 'dining') go('dining'); if (CH.dining.toast) CH.dining.toast(); }
 function shipWhistle(){
   if (!AC || !soundOn) return;
   const t = AC.currentTime, f = AC.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 700; f.Q.value = 2;
@@ -2331,6 +2643,7 @@ function toggleNest(){
 }
 $('#bView').onclick = toggleNest;
 $('#bNext').onclick = nextChapter;
+$('#bToast').onclick = doToast;
 function toast(msg){ const t = $('#toast'); t.textContent = msg; t.hidden = false; setTimeout(() => t.hidden = true, 4500); }
 
 /* ---------- VR headset (WebXR) ---------- */
@@ -2417,6 +2730,7 @@ const VOICE = [
   ['right', /\b(turn |go )?right\b/g],
   ['back', /\b(back ?up|backwards?|go back|reverse)\b/g],
   ['walk', /\b(walk|walking|go|start|forward|move|onwards?|keep going)\b/g],
+  ['toast', /\b(cheers|toast|raise a glass|bottoms up|chin chin)\b/g],
   ['next', /\bnext\b/g],
   ['replay', /\b(replay|again|restart)\b/g],
   ['nest', /\b(crow'?s'? ?nest|crow nest|cross nest|the nest|lookout|look out|up the mast|climb up|go up)\b/g],
@@ -2431,6 +2745,7 @@ function runCmd(c){
   else if (c === 'right') turnBy(-Math.PI / 4);
   else if (c === 'around') turnBy(Math.PI);
   else if (c === 'next') nextChapter();
+  else if (c === 'toast') doToast();
   else if (c === 'replay'){ if (cur && cur.reset){ cur.reset(); setAmbience(curId); } }
   else if (c === 'nest'){ if (curId !== 'ice') go('ice'); if (!CH.ice.nest) toggleNest(); }
   else if (c === 'down'){ if (curId === 'ice' && CH.ice.nest) toggleNest(); }
@@ -2438,7 +2753,7 @@ function runCmd(c){
   else if (c === 'gzoomin') gogAdj('dist', 2); else if (c === 'gzoomout') gogAdj('dist', -2);
   else if (c === 'gmore') gogAdj('k', 0.1); else if (c === 'gless') gogAdj('k', -0.1);
   else if (c === 'gsetup'){ if (goggles) openGogSetup(); } else if (c === 'gdone'){ if (gogSetupOn) closeGogSetup(); }
-  const label = { walk: 'walking', back: 'backing up', stop: 'stopped', left: 'turned left', right: 'turned right', around: 'turned around', next: 'next chapter', replay: 'replaying', nest: 'crow’s nest', down: 'forecastle', gwider: 'lens gap ' + GOG.sep + ' mm', gnarrower: 'lens gap ' + GOG.sep + ' mm', gzoomin: 'zoom in', gzoomout: 'zoom out', gmore: 'more lens correction', gless: 'less lens correction', gsetup: 'goggles setup', gdone: 'setup saved' }[c];
+  const label = { walk: 'walking', back: 'backing up', stop: 'stopped', left: 'turned left', right: 'turned right', around: 'turned around', next: 'next chapter', replay: 'replaying', nest: 'crow’s nest', down: 'forecastle', gwider: 'lens gap ' + GOG.sep + ' mm', gnarrower: 'lens gap ' + GOG.sep + ' mm', gzoomin: 'zoom in', gzoomout: 'zoom out', gmore: 'more lens correction', gless: 'less lens correction', gsetup: 'goggles setup', gdone: 'setup saved', toast: 'cheers!' }[c];
   capHint = 'heard: ' + label; drawCap(); if (!goggles) toast('Voice: ' + label);
 }
 // act on each spoken command once per utterance, in the order spoken
