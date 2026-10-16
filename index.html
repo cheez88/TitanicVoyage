@@ -958,21 +958,47 @@ function bergGeometry(detail){
   }
   g.computeVertexNormals(); return g;
 }
+// stars: soft round points with a gaussian core and faint halo, gentle twinkle, dimmer and warmer near the horizon
+const starMat = new THREE.ShaderMaterial({
+  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, vertexColors: true, fog: false,
+  uniforms: { uT: { value: 0 }, uPR: { value: 1 }, uScale: { value: 1 } },
+  vertexShader: `attribute float aSize; attribute float aPhase; uniform float uT; uniform float uPR; uniform float uScale; varying vec3 vC; varying float vTw;
+    void main(){ vC = color; vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * mv;
+      float low = 1.0 - smoothstep(0.0, 0.25, normalize(position).y);
+      vTw = 1.0 - (0.18 + 0.35 * low) * (0.5 + 0.5 * sin(uT * (2.0 + aPhase * 5.0) + aPhase * 60.0));
+      gl_PointSize = max(1.5, aSize * uPR * uScale); }`,
+  fragmentShader: `varying vec3 vC; varying float vTw;
+    void main(){ vec2 d = gl_PointCoord - 0.5; float r2 = dot(d, d) * 4.0;
+      float a = (exp(-r2 * 16.0) + exp(-r2 * 4.0) * 0.18) * vTw; if (a < 0.004) discard;
+      gl_FragColor = vec4(vC * a, a); }`
+});
 function starField(){
-  const grp = new THREE.Group(), bandN = new THREE.Vector3(0.35, 0.45, 0.82).normalize(), pr = R.getPixelRatio();
-  const mk = (n, size, band) => {
-    const pos = [], col = [], v = new THREE.Vector3();
-    while (pos.length < n * 3){
+  const grp = new THREE.Group(), bandN = new THREE.Vector3(0.35, 0.45, 0.82).normalize();
+  starMat.uniforms.uPR.value = R.getPixelRatio();
+  const pos = [], col = [], size = [], phase = [], v = new THREE.Vector3();
+  const add = (n, band) => {
+    let k = 0;
+    while (k < n){
       v.set(rnd(-1, 1), rnd(-0.02, 1), rnd(-1, 1)); const l = v.lengthSq(); if (l > 1 || l < 0.01) continue; v.normalize();
       if (band){ const d = v.dot(bandN); if (Math.random() > Math.exp(-d * d / 0.012)) continue; }
+      k++;
+      const mag = band ? rnd(0, .35) : Math.pow(Math.random(), 3.2);           // most stars faint, a few bright
+      const ext = 0.35 + 0.65 * THREE.MathUtils.smoothstep(v.y, -0.02, 0.18); // atmospheric dimming near the horizon
+      const b = (0.18 + 0.82 * mag) * ext, t = Math.random();
+      const warm = (1 - ext) * 0.3;
+      col.push(b * (t > .86 ? 1 : t < .18 ? .8 : .95), b * (t < .18 ? .88 : .94 - warm * .3), b * (t > .86 ? .78 : 1 - warm));
+      size.push(band ? rnd(2.2, 3.2) : 2.6 + mag * 6.5);
+      phase.push(Math.random());
       v.multiplyScalar(7000); pos.push(v.x, v.y, v.z);
-      const b = band ? rnd(.25, .6) : Math.pow(Math.random(), 2.2) * .9 + .1, t = Math.random();
-      col.push(b * (t > .85 ? 1 : t < .2 ? .78 : .93), b * (t < .2 ? .86 : .95), b * (t > .85 ? .78 : 1));
     }
-    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
-    return new THREE.Points(geo, new THREE.PointsMaterial({ size: size * pr, sizeAttenuation: false, vertexColors: true, fog: false, depthWrite: false, transparent: true }));
   };
-  grp.add(mk(6000, 1.4, false), mk(260, 2.8, false), mk(12000, 1.0, true));
+  add(6500, false); add(14000, true);
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  geo.setAttribute('aSize', new THREE.Float32BufferAttribute(size, 1));
+  geo.setAttribute('aPhase', new THREE.Float32BufferAttribute(phase, 1));
+  const pts = new THREE.Points(geo, starMat); pts.frustumCulled = false; grp.add(pts);
   return grp;
 }
 
@@ -981,12 +1007,23 @@ function buildIce(ch){
   S.fog = new THREE.FogExp2(0x070c14, 0.0016);
   const skyM = new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false, fog: false,
     vertexShader: `varying vec3 vD; void main(){ vD = position; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
-    fragmentShader: `varying vec3 vD; void main(){ float y = normalize(vD).y; vec3 c = mix(vec3(0.045,0.07,0.11), vec3(0.004,0.008,0.02), smoothstep(-0.02, 0.45, y)); gl_FragColor = vec4(c,1.0); }` });
+    fragmentShader: `varying vec3 vD;
+      float h(vec3 p){ return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }
+      float n3(vec3 p){ vec3 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+        return mix(mix(mix(h(i), h(i + vec3(1,0,0)), f.x), mix(h(i + vec3(0,1,0)), h(i + vec3(1,1,0)), f.x), f.y),
+                   mix(mix(h(i + vec3(0,0,1)), h(i + vec3(1,0,1)), f.x), mix(h(i + vec3(0,1,1)), h(i + vec3(1,1,1)), f.x), f.y), f.z); }
+      void main(){ vec3 d = normalize(vD); float y = d.y;
+        vec3 c = mix(vec3(0.045,0.07,0.11), vec3(0.004,0.008,0.02), smoothstep(-0.02, 0.45, y));
+        float b = dot(d, normalize(vec3(0.35, 0.45, 0.82)));
+        float mw = exp(-b * b / 0.018) * (0.45 + 0.55 * n3(d * 9.0)) * (0.6 + 0.4 * n3(d * 23.0));
+        float dust = smoothstep(0.5, 0.9, n3(d * 6.0 + 3.0) * 0.6 + n3(d * 17.0) * 0.4) * exp(-b * b / 0.003);
+        c += vec3(0.05, 0.055, 0.07) * mw * (1.0 - 0.45 * dust) * smoothstep(-0.02, 0.2, y);
+        gl_FragColor = vec4(c, 1.0); }` });
   const skyDome = new THREE.Mesh(new THREE.SphereGeometry(7600, 32, 16), skyM); S.add(skyDome);
   const stars = starField(); S.add(stars);
 
   const water = new Water(new THREE.PlaneGeometry(30000, 30000), {
-    textureWidth: LOW ? 256 : 512, textureHeight: LOW ? 256 : 512, waterNormals: makeWaterNormals(256),
+    textureWidth: LOW ? 512 : 1024, textureHeight: LOW ? 512 : 1024, waterNormals: makeWaterNormals(256),
     sunDirection: new THREE.Vector3(0, 1, 0), sunColor: 0x0a0e14, waterColor: 0x00040a, distortionScale: 0.35, fog: true
   });
   water.material.uniforms.flow = { value: new THREE.Vector2() };
@@ -996,6 +1033,8 @@ function buildIce(ch){
     .replace('( vec3( 0.1 ) + reflectionSample * 0.9', '( vec3( 0.004 ) + reflectionSample * 0.9');
   water.material.uniforms.size.value = 2.5;
   water.rotation.x = -Math.PI / 2; water.position.y = -15; S.add(water);
+  { const mirrorRes = LOW ? 512 : 1024, orig = water.onBeforeRender, db = new THREE.Vector2();
+    water.onBeforeRender = function (...args){ R.getDrawingBufferSize(db); starMat.uniforms.uScale.value = Math.min(1, mirrorRes / Math.max(1, db.y)); orig.apply(this, args); starMat.uniforms.uScale.value = 1; }; }
 
   S.add(new THREE.HemisphereLight(0x6a7894, 0x050608, 1.1));
   S.add(new THREE.AmbientLight(0x1a2236, 0.6));
@@ -1123,7 +1162,7 @@ function buildIce(ch){
   };
   ch.scene = S; ch.exposure = 1.25; ch.bloom = 0.7;
   ch.update = (dt, t, camPos) => {
-    ch.ct += dt; const ct = ch.ct;
+    ch.ct += dt; const ct = ch.ct; starMat.uniforms.uT.value = t;
     water.material.uniforms.time.value += dt * 0.5;
     water.material.uniforms.flow.value.y = -t * 11.6;
     foams.forEach(f => f.offset.y = (f.offset.y + dt * 11.6 / 80) % 1);
